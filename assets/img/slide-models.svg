@@ -1,0 +1,35 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 500" role="img" aria-label="Model usage bar chart">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#0b1020"/>
+      <stop offset="100%" stop-color="#141b2f"/>
+    </linearGradient>
+  </defs>
+  <rect width="800" height="500" fill="url(#bg)"/>
+  <g font-family="ui-sans-serif, system-ui, sans-serif" font-size="14" fill="#edf2ff">
+    <text x="80" y="80" font-size="18" font-weight="700">Process runs per model</text>
+    <text x="80" y="100" font-size="12" fill="#9aa8c7">Live z core_task_process_runs · 2026-05-09</text>
+
+    <text x="80" y="155">Sonnet 4.6</text>
+    <rect x="200" y="140" width="490" height="22" fill="#41d7ff" rx="4"/>
+    <text x="700" y="156" fill="#9aa8c7" font-size="13">326</text>
+
+    <text x="80" y="200">Opus 4.7</text>
+    <rect x="200" y="185" width="402" height="22" fill="#8ee66f" rx="4"/>
+    <text x="612" y="201" fill="#9aa8c7" font-size="13">268</text>
+
+    <text x="80" y="245">Haiku 4.5</text>
+    <rect x="200" y="230" width="302" height="22" fill="#ffae5e" rx="4"/>
+    <text x="512" y="246" fill="#9aa8c7" font-size="13">201</text>
+
+    <text x="80" y="290">CI / GHA</text>
+    <rect x="200" y="275" width="71" height="22" fill="#9aa8c7" rx="4"/>
+    <text x="281" y="291" fill="#9aa8c7" font-size="13">47</text>
+
+    <text x="80" y="350" font-size="13" fill="#9aa8c7">Routing pravidlo:</text>
+    <text x="80" y="372" font-size="13">easy / medium →  <tspan fill="#41d7ff" font-weight="700">Sonnet 4.6</tspan></text>
+    <text x="80" y="392" font-size="13">hard →  <tspan fill="#8ee66f" font-weight="700">Opus 4.7</tspan></text>
+    <text x="80" y="412" font-size="13">review / test →  <tspan fill="#ffae5e" font-weight="700">Haiku 4.5</tspan> (alebo distinct-from-processing)</text>
+  </g>
+  <text x="400" y="465" text-anchor="middle" font-family="ui-sans-serif, system-ui, sans-serif" font-size="13" fill="#9aa8c7">7,56 M tokenov spotrebovaných · per-stage audit s requested + actual model</text>
+</svg>

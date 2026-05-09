@@ -13,7 +13,7 @@
     },
     {
       "title": "Pred SRcore",
-      "image": "/assets/img/slide-02.svg",
+      "image": "/assets/img/slide-problem.svg",
       "bullets": [
         "Tri paralelné systémy úloh: tabuľka, GitHub Issues, legacy app DB",
         "„Done\" bol self-report — bez dôkazu, auditu a konzistencie",
@@ -23,7 +23,7 @@
     },
     {
       "title": "Vízia v jednej vete",
-      "image": "/assets/img/slide-03.svg",
+      "image": "/assets/img/slide-vision.svg",
       "bullets": [
         "Jedna DB, jeden workflow, jedno miesto na všetko",
         "Ľudia aj AI agenti pracujú nad rovnakou frontou úloh",
@@ -53,7 +53,7 @@
     },
     {
       "title": "Done-guard — DB ti nedovolí klamať",
-      "image": "/assets/img/slide-03.svg",
+      "image": "/assets/img/slide-doneguard.svg",
       "bullets": [
         "Trigger fyzicky blokuje status=done bez 3 procesných behov",
         "Každý beh musí mať model, tokeny a čas — žiadne medzery",
@@ -64,7 +64,7 @@
     },
     {
       "title": "Routing modelov",
-      "image": "/assets/img/slide-01.svg",
+      "image": "/assets/img/slide-models.svg",
       "bullets": [
         "Easy/medium → Sonnet 4.6 (rýchly, lacný)",
         "Hard → Opus 4.7 (presnosť na komplexné zmeny)",
@@ -75,7 +75,7 @@
     },
     {
       "title": "Orchestrátor — Claude ako manažér, nie kódér",
-      "image": "/assets/img/slide-02.svg",
+      "image": "/assets/img/slide-orchestrator.svg",
       "bullets": [
         "Claude triážuje ready frontu, deleguje, monitoruje",
         "Subagenti implementujú v izolovaných /tmp/<task> klonoch",
@@ -96,7 +96,7 @@
     },
     {
       "title": "V2 sweep — dôkaz priepustnosti",
-      "image": "/assets/img/slide-01.svg",
+      "image": "/assets/img/slide-v2sweep.svg",
       "bullets": [
         "13 projektov migrovaných na V2 štandard za 4 dni (4.–7. máj)",
         "Kairo: 0.7.11 / 8.7 → 1.4.8 / 9.9",
@@ -138,7 +138,7 @@
     },
     {
       "title": "Ďalšie kroky",
-      "image": "/assets/img/slide-03.svg",
+      "image": "/assets/img/slide-roadmap.svg",
       "bullets": [
         "Cost dashboard: spotreba tokenov per projekt a per model",
         "Šablóny pre opakujúce sa úlohy",
