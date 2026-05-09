@@ -1,0 +1,23 @@
+# Changelog
+
+All notable changes to this project will be documented in this file.
+
+The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
+and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
+
+## [Unreleased]
+
+## [0.1.0] - 2026-05-09
+
+### Added
+- Initial V2 baseline: slide deck viewer (image-left, bullets-right)
+- Keyboard navigation: ←/→/Home/End/F/Esc + touch swipe
+- Progress bar + slide counter (`n / N`)
+- Slide content driven by `data/slides.json` (editable, no rebuild)
+- Strict CSP from start (`script-src 'self'`, `style-src 'self'`, Trusted Types `presentation-template`)
+- Security headers: X-Frame-Options DENY, X-Content-Type-Options, Referrer-Policy, Permissions-Policy
+- Health endpoints `/health`, `/healthz`, `/version`
+- 404 page, PWA manifest, theme-color, skip-link, `<main>` landmark
+- Caddyfile + Dockerfile (caddy:2-alpine), `app.json` healthchecks
+- Domain `presentation.sardonicrepulsion.com`, Dokku app `presentation`, deployer webhook
+- Static test gate (CSP, no inline `<style>`/`<script>`, version consistency, slide schema)

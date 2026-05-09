@@ -1,0 +1,35 @@
+{
+  "title": "Presentation",
+  "slides": [
+    {
+      "title": "Vitajte v Presentation",
+      "image": "/assets/img/slide-01.svg",
+      "bullets": [
+        "Slide deck viewer pre HTML/CSS/JS",
+        "Navigácia ←/→, Home/End, F = fullscreen",
+        "Touch swipe na mobile",
+        "Editácia slidov v `data/slides.json`"
+      ]
+    },
+    {
+      "title": "Layout: image vľavo, bullets vpravo",
+      "image": "/assets/img/slide-02.svg",
+      "bullets": [
+        "Responzívny grid 1.1fr / 1fr",
+        "Pod 860px sa preklopí na 1 stĺpec",
+        "Obrázok = pozadie elementu (CSS `background-image`)",
+        "Žiadne externé CDN, žiadny JS framework"
+      ]
+    },
+    {
+      "title": "Strict CSP od štartu",
+      "image": "/assets/img/slide-03.svg",
+      "bullets": [
+        "`script-src 'self'` — žiadny inline JS",
+        "`style-src 'self'` — žiadne inline štýly",
+        "Trusted Types policy `presentation-template`",
+        "Caddy 2-alpine + Dokku hosting"
+      ]
+    }
+  ]
+}
