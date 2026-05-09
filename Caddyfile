@@ -14,15 +14,15 @@
 
     handle /health {
         header Content-Type application/json
-        respond "{\"status\":\"ok\",\"version\":\"0.3.1\"}" 200
+        respond "{\"status\":\"ok\",\"version\":\"0.4.0\"}" 200
     }
     handle /healthz {
         header Content-Type application/json
-        respond "{\"status\":\"ok\",\"version\":\"0.3.1\"}" 200
+        respond "{\"status\":\"ok\",\"version\":\"0.4.0\"}" 200
     }
     handle /version {
         header Content-Type application/json
-        respond `{"app":"presentation","version":"0.3.1","classification":"tool/public/active"}` 200
+        respond `{"app":"presentation","version":"0.4.0","classification":"tool/public/active"}` 200
     }
 
     @static path_regexp static \.((jpg|jpeg|png|gif|svg|ico|css|js|woff2?|ttf|webmanifest|json))$

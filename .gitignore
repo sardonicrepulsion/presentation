@@ -7,3 +7,5 @@ dist/
 playwright-report/
 test-results/
 .cache/
+DRAFT_OUTLINE.md
+screenshot_srcore.mjs
