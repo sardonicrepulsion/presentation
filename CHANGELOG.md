@@ -7,6 +7,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.3.1] - 2026-05-09
+
+### Fixed
+- `package.json` version bump (was stuck at 0.2.0 while other markers were 0.3.0); deployer precheck blocked merge of v0.3.0 — this hotfix syncs all version markers and unblocks live deploy
+
 ## [0.3.0] - 2026-05-09
 
 ### Added
