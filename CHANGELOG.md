@@ -7,6 +7,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.2.0] - 2026-05-09
+
+### Added
+- Playwright smoke E2E (`tests/e2e/smoke.spec.mjs`): initial render + counter `1/N`, ArrowRight/Prev/Next nav, Home/End jumps, strict CSP header assertions + `/healthz` + `/version` JSON shape
+- `playwright.config.mjs` (chromium project, baseURL `http://localhost:18080`)
+- `playwright-smoke` GitHub Actions job on dedicated `sardonic-arm64-presentation` runner (Playwright pre-installed at `/opt/playwright-browsers`); uploads `playwright-report` artifact on failure
+- `@playwright/test` ^1.48.0 dev dependency + `npm run test:e2e` script
+- `.gitignore` entries for `playwright-report/`, `test-results/`, `.cache/`
+
 ## [0.1.0] - 2026-05-09
 
 ### Added
