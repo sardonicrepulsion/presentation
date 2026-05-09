@@ -1,34 +1,129 @@
 {
-  "title": "Presentation",
+  "title": "SRcore — interný systém na riadenie projektov",
   "slides": [
     {
-      "title": "Vitajte v Presentation",
+      "title": "SRcore — zdroj pravdy pre projekty, úlohy a AI agentov",
       "image": "/assets/img/slide-01.svg",
       "bullets": [
-        "Slide deck viewer pre HTML/CSS/JS",
-        "Navigácia ←/→, Home/End, F = fullscreen",
-        "Touch swipe na mobile",
-        "Editácia slidov v `data/slides.json`"
+        "Ako riadime 25 aplikácií, 460 úloh a 7,5 M tokenov v jednom workflow",
+        "Prezentuje: Peter Boda",
+        "9. mája 2026",
+        "SRcore v1.5.4 · rating 10/10"
       ]
     },
     {
-      "title": "Layout: image vľavo, bullets vpravo",
+      "title": "Problém pred SRcore",
       "image": "/assets/img/slide-02.svg",
       "bullets": [
-        "Responzívny grid 1.1fr / 1fr",
-        "Pod 860px sa preklopí na 1 stĺpec",
-        "Obrázok = pozadie elementu (CSS `background-image`)",
-        "Žiadne externé CDN, žiadny JS framework"
+        "Tri paralelné systémy úloh: tabuľka, GitHub Issues, legacy app DB",
+        "„Done“ bol self-report — bez dôkazu, auditu a konzistencie",
+        "AI agenti nemali zdieľanú frontu, šliapali si po sebe",
+        "Kvalita projektov klesala (rating 5–6/10), žiadny objektívny baseline"
       ]
     },
     {
-      "title": "Strict CSP od štartu",
+      "title": "Vízia v jednej vete",
       "image": "/assets/img/slide-03.svg",
       "bullets": [
-        "`script-src 'self'` — žiadny inline JS",
-        "`style-src 'self'` — žiadne inline štýly",
-        "Trusted Types policy `presentation-template`",
-        "Caddy 2-alpine + Dokku hosting"
+        "Jedna DB, jeden workflow, jedno miesto na všetko",
+        "Ľudia aj AI agenti pracujú nad rovnakou frontou úloh",
+        "Každé „done“ je dokázateľné, auditovateľné a replayovateľné",
+        "Migračný template posunie ľubovoľnú legacy appku na V2 v jednom sweepe"
+      ]
+    },
+    {
+      "title": "Architektúra v skratke",
+      "image": "/assets/img/slide-01.svg",
+      "bullets": [
+        "PHP 8.3 + Caddy 2 + MySQL 8 — bez frameworku, bez build kroku",
+        "Vanilla JS frontend, ~3 k LOC, triviálne sa audituje",
+        "SSO/JWT brána, role user / agent / admin / auditor",
+        "55 idempotentných SQL migrácií — reprodukovateľné z nuly"
+      ]
+    },
+    {
+      "title": "Životný cyklus úlohy",
+      "image": "/assets/img/slide-02.svg",
+      "bullets": [
+        "8 stavov: new → ready → in-progress → in-review → testing → done",
+        "Plus on-hold a canceled; každý stav má jasného vlastníka",
+        "Soft-delete archív, drag-reorder fronta, kanban view",
+        "Stale-watcher auto-pauzuje úlohy idle viac než 2 h na on-hold"
+      ]
+    },
+    {
+      "title": "Done-guard — DB ti nedovolí klamať",
+      "image": "/assets/img/slide-03.svg",
+      "bullets": [
+        "Trigger fyzicky blokuje status=done bez 3 procesných behov",
+        "Každý beh musí mať model, tokeny a čas",
+        "Review model musí byť odlišný od processing modelu",
+        "Aj root SQL UPDATE zlyhá: done_status_requires_complete_process_metrics",
+        "Tá istá ochrana platí proti AI halucinujúcej dokončenie"
+      ]
+    },
+    {
+      "title": "Routing modelov — správny model na správnu úlohu",
+      "image": "/assets/img/slide-01.svg",
+      "bullets": [
+        "Easy/medium → Sonnet 4.6 (rýchly, lacný)",
+        "Hard → Opus 4.7 (presnosť na komplexné zmeny)",
+        "Review/test → Haiku 4.5 alebo distinct-from-processing",
+        "Každý stage zaznamená requested_model + actual_model + tokeny + čas",
+        "Live: 268 Opus / 326 Sonnet / 201 Haiku / 47 CI behov"
+      ]
+    },
+    {
+      "title": "Orchestrátor — Claude ako manažér, nie kódér",
+      "image": "/assets/img/slide-02.svg",
+      "bullets": [
+        "Claude triážuje ready frontu, deleguje, monitoruje",
+        "Subagenti implementujú v izolovaných /tmp/<task> klonoch",
+        "Každý subagent dostane model podľa obtiažnosti",
+        "Manažér zabíja runaway slučky, reassignuje, retryuje"
+      ]
+    },
+    {
+      "title": "Live čísla (2026-05-09)",
+      "image": "/assets/img/slide-03.svg",
+      "bullets": [
+        "25 aktívnych projektov, 460 úloh (429 done = 93 % completion)",
+        "1 385 process_runs — audit-grade potvrdenky o vykonanej práci",
+        "1 543 záznamov v audit logu",
+        "7,56 M tokenov spotrebovaných naprieč projektami",
+        "55 DB migrácií, všetky idempotentné a re-runnable"
+      ]
+    },
+    {
+      "title": "V2 sweep — dôkaz priepustnosti",
+      "image": "/assets/img/slide-01.svg",
+      "bullets": [
+        "13 projektov migrovaných na V2 štandard za 4 dni (4.–7. máj)",
+        "Kairo: 0.7.11 / 8.7 → 1.4.8 / 9.9",
+        "Aventera: 1.3.0 / 8.6 → 1.7.6 / 9.9",
+        "Drums: 0.3.1 / 5.7 → 0.10.0 / 9.4",
+        "Decoy: 1.6.2 / 5.6 → 1.13.0 / 9.4"
+      ]
+    },
+    {
+      "title": "Demo — kľúčové obrazovky",
+      "image": "/assets/img/slide-02.svg",
+      "bullets": [
+        "/dashboard — total tokens, velocity, activity feed",
+        "/tasks — kanban + filtre + drag reorder",
+        "/tasks/:id — process_runs detail s modelmi/tokenmi/časmi",
+        "/audit — filter podľa actor/action/decision, diff viewer"
+      ]
+    },
+    {
+      "title": "Ďalšie kroky / otázky",
+      "image": "/assets/img/slide-03.svg",
+      "bullets": [
+        "Cost dashboard: spotreba tokenov per projekt a per model",
+        "Šablóny pre opakujúce sa úlohy",
+        "Verejné read-only stránky projektov",
+        "Otvorená otázka: open-source platformu alebo interné rozšírenie?",
+        "Otázky?"
       ]
     }
   ]
