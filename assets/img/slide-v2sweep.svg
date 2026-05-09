@@ -1,0 +1,76 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 500" role="img" aria-label="V2 sweep before/after rating bumps">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#0b1020"/>
+      <stop offset="100%" stop-color="#141b2f"/>
+    </linearGradient>
+  </defs>
+  <rect width="800" height="500" fill="url(#bg)"/>
+  <g font-family="ui-sans-serif, system-ui, sans-serif" font-size="13" fill="#edf2ff">
+    <text x="80" y="60" font-size="18" font-weight="700">V2 sweep — rating before / after</text>
+    <text x="80" y="80" font-size="12" fill="#9aa8c7">13 projektov · 4 dni · ~110 PR · all autonomous</text>
+
+    <g font-size="12">
+      <text x="180" y="115" fill="#9aa8c7">0</text>
+      <text x="380" y="115" fill="#9aa8c7">5</text>
+      <text x="580" y="115" fill="#9aa8c7">10</text>
+    </g>
+
+    <g>
+      <text x="80" y="148" font-weight="600">Kairo</text>
+      <rect x="180" y="135" width="174" height="8" fill="#7a4242" rx="3"/>
+      <rect x="180" y="148" width="198" height="8" fill="#8ee66f" rx="3"/>
+      <text x="700" y="155" font-size="11" fill="#9aa8c7">8.7 → 9.9</text>
+    </g>
+    <g>
+      <text x="80" y="180" font-weight="600">Aventera</text>
+      <rect x="180" y="167" width="172" height="8" fill="#7a4242" rx="3"/>
+      <rect x="180" y="180" width="198" height="8" fill="#8ee66f" rx="3"/>
+      <text x="700" y="187" font-size="11" fill="#9aa8c7">8.6 → 9.9</text>
+    </g>
+    <g>
+      <text x="80" y="212" font-weight="600">Decoy</text>
+      <rect x="180" y="199" width="112" height="8" fill="#7a4242" rx="3"/>
+      <rect x="180" y="212" width="188" height="8" fill="#8ee66f" rx="3"/>
+      <text x="700" y="219" font-size="11" fill="#9aa8c7">5.6 → 9.4</text>
+    </g>
+    <g>
+      <text x="80" y="244" font-weight="600">Drums</text>
+      <rect x="180" y="231" width="114" height="8" fill="#7a4242" rx="3"/>
+      <rect x="180" y="244" width="188" height="8" fill="#8ee66f" rx="3"/>
+      <text x="700" y="251" font-size="11" fill="#9aa8c7">5.7 → 9.4</text>
+    </g>
+    <g>
+      <text x="80" y="276" font-weight="600">Lacarte</text>
+      <rect x="180" y="263" width="112" height="8" fill="#7a4242" rx="3"/>
+      <rect x="180" y="276" width="188" height="8" fill="#8ee66f" rx="3"/>
+      <text x="700" y="283" font-size="11" fill="#9aa8c7">5.6 → 9.4</text>
+    </g>
+    <g>
+      <text x="80" y="308" font-weight="600">Tools</text>
+      <rect x="180" y="295" width="110" height="8" fill="#7a4242" rx="3"/>
+      <rect x="180" y="308" width="188" height="8" fill="#8ee66f" rx="3"/>
+      <text x="700" y="315" font-size="11" fill="#9aa8c7">5.5 → 9.4</text>
+    </g>
+    <g>
+      <text x="80" y="340" font-weight="600">Education</text>
+      <rect x="180" y="327" width="110" height="8" fill="#7a4242" rx="3"/>
+      <rect x="180" y="340" width="188" height="8" fill="#8ee66f" rx="3"/>
+      <text x="700" y="347" font-size="11" fill="#9aa8c7">5.5 → 9.4</text>
+    </g>
+    <g>
+      <text x="80" y="372" font-weight="600">Gear</text>
+      <rect x="180" y="359" width="100" height="8" fill="#7a4242" rx="3"/>
+      <rect x="180" y="372" width="188" height="8" fill="#8ee66f" rx="3"/>
+      <text x="700" y="379" font-size="11" fill="#9aa8c7">5.0 → 9.4</text>
+    </g>
+
+    <g font-size="11" fill="#9aa8c7">
+      <rect x="80" y="412" width="14" height="8" fill="#7a4242" rx="2"/>
+      <text x="105" y="420">before</text>
+      <rect x="170" y="412" width="14" height="8" fill="#8ee66f" rx="2"/>
+      <text x="195" y="420">after</text>
+    </g>
+  </g>
+  <text x="400" y="465" text-anchor="middle" font-family="ui-sans-serif, system-ui, sans-serif" font-size="13" fill="#9aa8c7">CSP · Trusted Types · /healthz · HSTS · CI · PWA · a11y · audit · rating</text>
+</svg>

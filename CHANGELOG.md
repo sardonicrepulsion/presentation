@@ -7,6 +7,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.5.0] - 2026-05-09
+
+### Added
+- 5 more custom SVG diagrams (every non-screenshot slide now has its own diagram instead of a placeholder): `slide-problem.svg` (3 broken systems triptych), `slide-vision.svg` (funnel: many inputs → SRcore → outputs), `slide-doneguard.svg` (SQL block + BLOCKED stamp + error code), `slide-models.svg` (real-data bar chart 326/268/201/47), `slide-orchestrator.svg` (manager → 3 subagents → 3 reviewers/testers org chart), `slide-v2sweep.svg` (8-project before/after ratings), `slide-roadmap.svg` (Q3 / Q4 / Q1'27 timeline + Otázky)
+
+### Changed
+- Re-captured 4 SRcore screenshots at 1920×1200 with `deviceScaleFactor: 1.5` so dashboard hero shows time-tracking + per-project breakdown rows (not just totals)
+- Every slide now has a unique image (no more 3-SVG cycle)
+
 ## [0.4.0] - 2026-05-09
 
 ### Added
