@@ -2,23 +2,23 @@
   "title": "SRcore — interný systém na riadenie projektov",
   "slides": [
     {
-      "title": "SRcore — zdroj pravdy pre projekty, úlohy a AI agentov",
-      "image": "/assets/img/slide-01.svg",
+      "title": "SRcore",
+      "image": "/assets/img/slide-title.svg",
       "bullets": [
-        "Ako riadime 25 aplikácií, 460 úloh a 7,5 M tokenov v jednom workflow",
-        "Prezentuje: Peter Boda",
-        "9. mája 2026",
-        "SRcore v1.5.4 · rating 10/10"
+        "Zdroj pravdy pre projekty, úlohy a AI agentov",
+        "25 aplikácií · 460 úloh · 7,56 M tokenov",
+        "Peter Boda · 9. mája 2026",
+        "v1.5.4 · rating 10/10"
       ]
     },
     {
-      "title": "Problém pred SRcore",
+      "title": "Pred SRcore",
       "image": "/assets/img/slide-02.svg",
       "bullets": [
         "Tri paralelné systémy úloh: tabuľka, GitHub Issues, legacy app DB",
-        "„Done“ bol self-report — bez dôkazu, auditu a konzistencie",
-        "AI agenti nemali zdieľanú frontu, šliapali si po sebe",
-        "Kvalita projektov klesala (rating 5–6/10), žiadny objektívny baseline"
+        "„Done\" bol self-report — bez dôkazu, auditu a konzistencie",
+        "AI agenti šliapali jeden po druhom, nemali zdieľanú frontu",
+        "Kvalita projektov klesala (rating 5–6/10), žiadny baseline"
       ]
     },
     {
@@ -27,26 +27,26 @@
       "bullets": [
         "Jedna DB, jeden workflow, jedno miesto na všetko",
         "Ľudia aj AI agenti pracujú nad rovnakou frontou úloh",
-        "Každé „done“ je dokázateľné, auditovateľné a replayovateľné",
+        "Každé „done\" je dokázateľné, auditovateľné, replayovateľné",
         "Migračný template posunie ľubovoľnú legacy appku na V2 v jednom sweepe"
       ]
     },
     {
-      "title": "Architektúra v skratke",
-      "image": "/assets/img/slide-01.svg",
+      "title": "Architektúra",
+      "image": "/assets/img/slide-architecture.svg",
       "bullets": [
         "PHP 8.3 + Caddy 2 + MySQL 8 — bez frameworku, bez build kroku",
-        "Vanilla JS frontend, ~3 k LOC, triviálne sa audituje",
-        "SSO/JWT brána, role user / agent / admin / auditor",
+        "Vanilla JS frontend ~3 k LOC — triviálne sa audituje",
+        "SSO/JWT brána, role: user / agent / admin / auditor",
         "55 idempotentných SQL migrácií — reprodukovateľné z nuly"
       ]
     },
     {
       "title": "Životný cyklus úlohy",
-      "image": "/assets/img/slide-02.svg",
+      "image": "/assets/img/slide-lifecycle.svg",
       "bullets": [
         "8 stavov: new → ready → in-progress → in-review → testing → done",
-        "Plus on-hold a canceled; každý stav má jasného vlastníka",
+        "Plus on-hold a canceled — každý stav má jasného vlastníka",
         "Soft-delete archív, drag-reorder fronta, kanban view",
         "Stale-watcher auto-pauzuje úlohy idle viac než 2 h na on-hold"
       ]
@@ -56,21 +56,21 @@
       "image": "/assets/img/slide-03.svg",
       "bullets": [
         "Trigger fyzicky blokuje status=done bez 3 procesných behov",
-        "Každý beh musí mať model, tokeny a čas",
+        "Každý beh musí mať model, tokeny a čas — žiadne medzery",
         "Review model musí byť odlišný od processing modelu",
         "Aj root SQL UPDATE zlyhá: done_status_requires_complete_process_metrics",
-        "Tá istá ochrana platí proti AI halucinujúcej dokončenie"
+        "Rovnaká ochrana proti AI halucinujúcej dokončenie"
       ]
     },
     {
-      "title": "Routing modelov — správny model na správnu úlohu",
+      "title": "Routing modelov",
       "image": "/assets/img/slide-01.svg",
       "bullets": [
         "Easy/medium → Sonnet 4.6 (rýchly, lacný)",
         "Hard → Opus 4.7 (presnosť na komplexné zmeny)",
         "Review/test → Haiku 4.5 alebo distinct-from-processing",
-        "Každý stage zaznamená requested_model + actual_model + tokeny + čas",
-        "Live: 268 Opus / 326 Sonnet / 201 Haiku / 47 CI behov"
+        "Každý beh: requested_model + actual_model + tokeny + čas",
+        "Live: 326 Sonnet · 268 Opus · 201 Haiku · 47 CI behov"
       ]
     },
     {
@@ -84,10 +84,10 @@
       ]
     },
     {
-      "title": "Live čísla (2026-05-09)",
-      "image": "/assets/img/slide-03.svg",
+      "title": "Live čísla",
+      "image": "/assets/img/srcore-dashboard.png",
       "bullets": [
-        "25 aktívnych projektov, 460 úloh (429 done = 93 % completion)",
+        "25 aktívnych projektov, 460 úloh (429 done = 93 %)",
         "1 385 process_runs — audit-grade potvrdenky o vykonanej práci",
         "1 543 záznamov v audit logu",
         "7,56 M tokenov spotrebovaných naprieč projektami",
@@ -101,28 +101,48 @@
         "13 projektov migrovaných na V2 štandard za 4 dni (4.–7. máj)",
         "Kairo: 0.7.11 / 8.7 → 1.4.8 / 9.9",
         "Aventera: 1.3.0 / 8.6 → 1.7.6 / 9.9",
-        "Drums: 0.3.1 / 5.7 → 0.10.0 / 9.4",
-        "Decoy: 1.6.2 / 5.6 → 1.13.0 / 9.4"
+        "Decoy: 1.6.2 / 5.6 → 1.13.0 / 9.4",
+        "Drums: 0.3.1 / 5.7 → 0.10.0 / 9.4"
       ]
     },
     {
-      "title": "Demo — kľúčové obrazovky",
-      "image": "/assets/img/slide-02.svg",
+      "title": "Demo — zoznam úloh",
+      "image": "/assets/img/srcore-tasks.png",
       "bullets": [
-        "/dashboard — total tokens, velocity, activity feed",
-        "/tasks — kanban + filtre + drag reorder",
-        "/tasks/:id — process_runs detail s modelmi/tokenmi/časmi",
-        "/audit — filter podľa actor/action/decision, diff viewer"
+        "Filtre: stav, projekt, owner, tag, SLA",
+        "Saved filters + bulk select",
+        "Drag-reorder fronta s decimálnou pozíciou",
+        "Tlačidlá akcie: archív, klon, pin, export"
       ]
     },
     {
-      "title": "Ďalšie kroky / otázky",
+      "title": "Demo — detail úlohy",
+      "image": "/assets/img/srcore-task-detail.png",
+      "bullets": [
+        "Spent / elapsed / waiting time — automaticky merané",
+        "Branch + PR linkovaný priamo do GitHub",
+        "Process runs: processing / review / testing s metrikami",
+        "Model audit: claude-sonnet-4-6, claude-opus-4-7, claude-haiku-4-5",
+        "Prepočítaný rating + breakdown po dokončení"
+      ]
+    },
+    {
+      "title": "Demo — audit log",
+      "image": "/assets/img/srcore-audit.png",
+      "bullets": [
+        "Každá write operácia: action + resource + actor + decision",
+        "Filter podľa actora, akcie, decízie, časového rozsahu",
+        "Diff viewer per záznam — vidíš presne čo sa zmenilo",
+        "Export CSV pre compliance reporty"
+      ]
+    },
+    {
+      "title": "Ďalšie kroky",
       "image": "/assets/img/slide-03.svg",
       "bullets": [
         "Cost dashboard: spotreba tokenov per projekt a per model",
         "Šablóny pre opakujúce sa úlohy",
         "Verejné read-only stránky projektov",
-        "Otvorená otázka: open-source platformu alebo interné rozšírenie?",
         "Otázky?"
       ]
     }

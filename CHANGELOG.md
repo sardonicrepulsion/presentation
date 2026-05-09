@@ -7,6 +7,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.4.0] - 2026-05-09
+
+### Added
+- Real SRcore screenshots for demo slides: `srcore-dashboard.png`, `srcore-tasks.png`, `srcore-task-detail.png`, `srcore-audit.png` (1440×900, captured against live `srcore.sardonicrepulsion.com`)
+- Custom SVG diagrams: `slide-title.svg` (SRcore branding + key numbers), `slide-architecture.svg` (Caddy → PHP → MySQL + side channels), `slide-lifecycle.svg` (8-state machine with stale-watcher branches)
+- Deck content expanded from 12 → 14 slides: demo split into 3 dedicated slides (tasks list / task detail / audit log) with screenshots; live numbers slide now uses the real dashboard hero
+
+### Changed
+- Slide bullets sharpened across the deck: title slide leads with throughput numbers; done-guard slide adds the DB-level error code; demo slides describe what the screenshot shows rather than abstract features
+
 ## [0.3.1] - 2026-05-09
 
 ### Fixed
