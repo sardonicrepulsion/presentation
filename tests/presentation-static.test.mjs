@@ -19,6 +19,10 @@ test('version consistency', () => {
   assert.equal(versionJson.version, versionTxt, 'version.json matches VERSION');
   assert.ok(caddy.includes(`"version":"${versionTxt}"`), 'Caddyfile /version handler matches VERSION');
   assert.ok(changelog.includes(`[${versionTxt}]`), 'CHANGELOG has entry for current version');
+  // Deployer also gates on package.json — keep it in lockstep so version-consistency CI matches
+  // the deploy-time check (mismatch caused 0.6.1 deploy block on 2026-05-10).
+  const pkg = JSON.parse(readFileSync('package.json', 'utf8'));
+  assert.equal(pkg.version, versionTxt, 'package.json matches VERSION');
 });
 
 test('version.json shape', () => {
