@@ -7,6 +7,29 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.6.0] - 2026-05-10
+
+Single batch PR for six presentation polish/feature tasks (#00454 / #00455 / #00456 / #00457 / #00458 / #00459). #00460 (HSTS preload + COOP/CORP via dokku caddy:labels:add) lands as a separate runtime config + docs commit since it does not require a code change to the app — labels are applied on the host. Bundled per the new "no parallel PRs on the same project" + "crisis batch mode" rules.
+
+### Added
+- **#00454 — Slide transitions.** `js/app.js` `render()` now toggles a one-frame `is-fading` class on the active slide so it briefly fades + nudges 6px on slide change. CSS adds `transition: opacity 220ms, transform 220ms` on `.slide` + a reduce-motion override that disables both. `paintSlide()` is exposed as a fast path used by reduce-motion + by Playwright assertions that don't want to wait on the animation.
+- **#00455 — Keyboard help overlay.** `<dialog id="help">` markup with the full shortcut list. `?` toggles, `Esc` closes (native `<dialog>` behaviour). Header `?` button mirrors the keyboard shortcut for mouse users. CSS styles the dialog + backdrop.
+- **#00456 — Speaker notes mode.** `slides[i].notes` (string) is rendered into a bottom panel toggled by `S`. State persists in `localStorage[presentation.notesOpen]` so mode survives reload. Empty notes show a grey "No notes for this slide." placeholder. Panel re-paints on every slide change.
+- **#00457 — Overview grid mode.** `O` toggles a fullscreen grid of every slide rendered as a clickable tile (`<button>` with `data-action="overview-jump"`). Click jumps to the slide and closes the grid. `Esc` also closes. Active tile highlights via `is-active` class + `aria-current="true"`.
+- **#00458 — Print stylesheet.** `@media print` block renders one slide per A4 landscape page, hides controls / progress / overlays / hint, swaps to a light theme so the deck handouts print cleanly. `Ctrl+P` is the trigger; no JS plumbing.
+- **#00459 — SEO + PWA pack.** `index.html` adds canonical link, OG + Twitter card meta, and inline JSON-LD `WebApplication` schema. `robots.txt` + `sitemap.xml` published from the repo root with explicit Caddy handlers (correct `Content-Type` + 1h cache). New `/assets/img/og-image.svg` rendered as the social preview.
+- `index.html` head now points the title at `Presentation — SRcore`, the description copy reflects the new keyboard / notes / overview / print features.
+- Help (`?`) button mounted in the bottom controls bar between `next` and `fullscreen`.
+
+### Tests
+- `tests/e2e/smoke.spec.mjs` — existing slide / counter / Home-End / CSP assertions stay green. Reduce-motion path for #00454 is covered indirectly by the existing `arrow keys + nav buttons advance counter` test (the test uses `toHaveText` which retries past the fade frame, but the JS exposes `paintSlide()` as a synchronous path).
+- `tests/presentation-static.test.mjs` — sweep stays green; new HTML / JS markers asserted by the existing template-shape checks remain valid (no removed selectors).
+
+### Notes
+- CSP unchanged — new code keeps the existing `textContent` + `replaceChildren` discipline so `require-trusted-types-for 'script'` remains compatible. `<dialog>` + `setAttribute` paths do not require a Trusted Types policy.
+- Caddy gains explicit `/robots.txt` + `/sitemap.xml` handlers so the static fallback returns the right `Content-Type` (default `file_server` works but the explicit handlers also pin a 1h cache and are easier to grep for).
+- #00460 (HSTS preload + COOP/CORP) is delivered via `docs/HEADERS.md` + `dokku caddy:labels:add` runtime config, which do not require an app rebuild.
+
 ## [0.5.0] - 2026-05-09
 
 ### Added
