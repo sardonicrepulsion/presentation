@@ -7,6 +7,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.6.1] - 2026-05-10
+
+### Fixed
+- `Dockerfile` `COPY` line missed `robots.txt` and `sitemap.xml`, so the v0.6.0 deploy returned 404 for both files even though the Caddyfile handlers were in place. Added both to the static-asset copy line.
+
 ## [0.6.0] - 2026-05-10
 
 Single batch PR for six presentation polish/feature tasks (#00454 / #00455 / #00456 / #00457 / #00458 / #00459). #00460 (HSTS preload + COOP/CORP via dokku caddy:labels:add) lands as a separate runtime config + docs commit since it does not require a code change to the app — labels are applied on the host. Bundled per the new "no parallel PRs on the same project" + "crisis batch mode" rules.
