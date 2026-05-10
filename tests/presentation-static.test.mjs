@@ -57,7 +57,10 @@ test('index.html has no inline style/script', () => {
   assert.doesNotMatch(indexHtml, /<style[^>]*>/, 'no inline <style>');
   assert.doesNotMatch(indexHtml, /\sstyle="/, 'no inline style="" attribute');
   assert.doesNotMatch(indexHtml, /\son\w+=["']/, 'no inline on*= handlers');
-  assert.doesNotMatch(indexHtml, /<script(?![^>]*\bsrc=)[^>]*>[\s\S]+?<\/script>/, 'no inline <script> body');
+  // #00459 — `<script type="application/ld+json">` is JSON data, not executable code; CSP does not run it.
+  // The "no inline executable script" rule still applies — guard against any script that is neither
+  // src-loaded nor explicitly typed as JSON-LD.
+  assert.doesNotMatch(indexHtml, /<script(?![^>]*\bsrc=)(?![^>]*type=["']application\/ld\+json["'])[^>]*>[\s\S]+?<\/script>/, 'no inline executable <script> body');
   assert.doesNotMatch(indexHtml, /javascript:/, 'no javascript: URL');
 });
 
@@ -82,7 +85,7 @@ test('js does not inject inline style elements', () => {
 });
 
 test('manifest shape', () => {
-  assert.equal(manifest.name, 'Presentation');
+  assert.match(manifest.name, /Presentation/i, 'manifest name mentions Presentation');
   assert.equal(manifest.display, 'standalone');
   assert.equal(manifest.theme_color, '#0b1020');
   assert.ok(Array.isArray(manifest.icons) && manifest.icons.length >= 2);
@@ -94,7 +97,75 @@ test('slides.json shape', () => {
     assert.equal(typeof s.title, 'string');
     assert.ok(Array.isArray(s.bullets));
     if (s.image) assert.equal(typeof s.image, 'string');
+    // #00456 — speaker notes are an optional string per slide.
+    if (s.notes !== undefined) assert.equal(typeof s.notes, 'string');
   }
+});
+
+// #00454 — slide fade transition driven by the `is-fading` class. JS toggles it on slide change;
+// CSS transitions opacity + transform; the reduce-motion media query disables both.
+test('slide transition + reduced-motion', () => {
+  assert.match(js, /is-fading/, 'JS toggles the is-fading class on slide change (#00454)');
+  assert.match(css, /\.slide\s*\{[^}]*transition\s*:[^}]*opacity[^}]*\}/, 'CSS transitions .slide opacity (#00454)');
+  assert.match(css, /\.slide\.is-fading\s*\{[^}]*opacity:\s*0/, 'is-fading collapses opacity (#00454)');
+  assert.match(css, /@media \(prefers-reduced-motion: reduce\)[\s\S]*?\.slide\s*\{[^}]*transition:\s*none/, 'reduce-motion disables slide transition (#00454)');
+});
+
+// #00455 — keyboard help overlay; ? toggles the dialog, Esc closes (native dialog behaviour).
+test('keyboard help dialog', () => {
+  assert.match(indexHtml, /<dialog id="help"/, 'help dialog markup present (#00455)');
+  assert.match(indexHtml, /data-action="toggle-help"/, 'toggle-help control wired (#00455)');
+  assert.match(js, /toggleHelp\s*\(/, 'JS exposes toggleHelp (#00455)');
+  assert.match(js, /case '\?':/, '? key opens the help dialog (#00455)');
+  assert.match(css, /\.help::backdrop/, 'help dialog has a styled backdrop (#00455)');
+});
+
+// #00456 — speaker notes panel; S toggles the bottom panel; preference persists in localStorage.
+test('speaker notes mode', () => {
+  assert.match(indexHtml, /<aside id="notes"/, 'notes panel markup present (#00456)');
+  assert.match(indexHtml, /id="notes-body"/, 'notes body mount present (#00456)');
+  assert.match(js, /case 's':[\s\S]*?case 'S':[\s\S]*?toggleNotes/, 'S key toggles notes (#00456)');
+  assert.match(js, /presentation\.notesOpen/, 'localStorage key persists notes preference (#00456)');
+  assert.match(css, /\.notes\s*\{/, 'notes panel CSS present (#00456)');
+});
+
+// #00457 — overview grid; O toggles a fullscreen tile grid; click jumps to a slide.
+test('overview grid mode', () => {
+  assert.match(indexHtml, /<section id="overview"/, 'overview container markup present (#00457)');
+  assert.match(js, /case 'o':[\s\S]*?case 'O':[\s\S]*?toggleOverview/, 'O key toggles overview (#00457)');
+  assert.match(js, /buildOverview\s*\(/, 'buildOverview helper present (#00457)');
+  assert.match(js, /data-action="overview-jump"|dataset\.action = 'overview-jump'|btn\.dataset\.action = 'overview-jump'/, 'overview tile click action wired (#00457)');
+  assert.match(css, /\.overview-grid\s*\{[^}]*display:\s*grid/, 'overview grid CSS present (#00457)');
+});
+
+// #00458 — print stylesheet: each slide on its own A4 landscape page; controls/overlays hidden.
+test('print stylesheet', () => {
+  assert.match(css, /@media print\s*\{[\s\S]*?@page\s*\{[^}]*size:\s*A4 landscape/, '@media print sets A4 landscape (#00458)');
+  assert.match(css, /@media print\s*\{[\s\S]*?\.slide\s*\{[^}]*page-break-after:\s*always/, '@media print forces one slide per page (#00458)');
+  assert.match(css, /@media print\s*\{[\s\S]*?\.controls[^}]*display:\s*none\s*!important/, '@media print hides controls bar (#00458)');
+});
+
+// #00459 — SEO + PWA pack: robots, sitemap, JSON-LD, OG meta, manifest categories.
+test('SEO + PWA pack', () => {
+  assert.ok(existsSync('robots.txt'), 'robots.txt published (#00459)');
+  assert.ok(existsSync('sitemap.xml'), 'sitemap.xml published (#00459)');
+  assert.ok(existsSync('assets/img/og-image.svg'), 'og-image SVG published (#00459)');
+  assert.match(indexHtml, /<script type="application\/ld\+json">/, 'JSON-LD WebApplication present (#00459)');
+  assert.match(indexHtml, /property="og:image"/, 'og:image meta present (#00459)');
+  assert.match(indexHtml, /rel="canonical"/, 'canonical link present (#00459)');
+  assert.match(caddy, /handle \/robots\.txt/, 'Caddyfile has explicit /robots.txt handler (#00459)');
+  assert.match(caddy, /handle \/sitemap\.xml/, 'Caddyfile has explicit /sitemap.xml handler (#00459)');
+  assert.ok(Array.isArray(manifest.categories) && manifest.categories.length >= 1, 'manifest carries categories (#00459)');
+});
+
+// #00460 — host-Caddy security headers documented in docs/HEADERS.md (delivered via dokku labels at runtime).
+test('host-Caddy headers docs', () => {
+  assert.ok(existsSync('docs/HEADERS.md'), 'docs/HEADERS.md present (#00460)');
+  const headersDoc = readFileSync('docs/HEADERS.md', 'utf8');
+  assert.match(headersDoc, /Strict-Transport-Security/, 'docs cover HSTS (#00460)');
+  assert.match(headersDoc, /Cross-Origin-Opener-Policy/, 'docs cover COOP (#00460)');
+  assert.match(headersDoc, /Cross-Origin-Resource-Policy/, 'docs cover CORP (#00460)');
+  assert.match(headersDoc, /dokku caddy:labels:add/, 'docs include the dokku label commands (#00460)');
 });
 
 test('slide image assets exist', () => {

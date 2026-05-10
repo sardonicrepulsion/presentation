@@ -244,6 +244,188 @@ body.is-fullscreen .controls:focus-within {
   .hint { display: none; }
 }
 
+/* #00454 — slide fade transition. JS toggles `is-fading` for one frame on slide change. */
+.slide {
+  transition: opacity 220ms ease, transform 220ms ease;
+  opacity: 1;
+  transform: translateY(0);
+}
+.slide.is-fading {
+  opacity: 0;
+  transform: translateY(6px);
+}
+
+/* #00456 — speaker notes panel (S toggles). */
+.notes {
+  position: fixed;
+  left: 50%;
+  bottom: 96px;
+  transform: translateX(-50%);
+  width: min(880px, 92vw);
+  max-height: 38vh;
+  display: flex;
+  flex-direction: column;
+  background: var(--panel);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  box-shadow: var(--shadow);
+  padding: 16px 20px;
+  gap: 10px;
+  overflow: hidden;
+  z-index: 40;
+}
+.notes-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.notes-title { font-size: 0.78rem; letter-spacing: 0.06em; text-transform: uppercase; color: var(--muted); }
+.notes-close {
+  background: transparent;
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  width: 30px;
+  height: 30px;
+  color: var(--text);
+  cursor: pointer;
+  font-size: 1.1rem;
+  font-family: inherit;
+}
+.notes-close:hover, .notes-close:focus-visible { background: var(--accent-soft); border-color: var(--accent); outline: none; }
+.notes-body { overflow-y: auto; color: var(--text); font-size: 0.95rem; line-height: 1.5; padding-right: 4px; }
+.notes-body p { margin: 0 0 8px; }
+.notes-body p:last-child { margin-bottom: 0; }
+.notes-empty { color: var(--muted); font-style: italic; }
+
+/* #00457 — overview grid (O toggles). */
+.overview {
+  position: fixed;
+  inset: 0;
+  background: rgba(11, 16, 32, 0.94);
+  backdrop-filter: blur(6px);
+  z-index: 60;
+  padding: 32px 32px 48px;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+}
+.overview-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 16px;
+}
+.overview-title { font-size: 1rem; letter-spacing: 0.06em; text-transform: uppercase; color: var(--muted); }
+.overview-close {
+  background: transparent;
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  width: 36px;
+  height: 36px;
+  color: var(--text);
+  cursor: pointer;
+  font-size: 1.2rem;
+  font-family: inherit;
+}
+.overview-close:hover, .overview-close:focus-visible { background: var(--accent-soft); border-color: var(--accent); outline: none; }
+.overview-grid {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  gap: 14px;
+}
+.overview-tile {
+  width: 100%;
+  min-height: 120px;
+  background: var(--panel);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 14px 16px;
+  color: var(--text);
+  text-align: left;
+  cursor: pointer;
+  font-family: inherit;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  transition: border-color 0.15s ease, transform 0.15s ease;
+}
+.overview-tile:hover, .overview-tile:focus-visible { border-color: var(--accent); transform: translateY(-1px); outline: none; }
+.overview-tile.is-active { border-color: var(--accent); box-shadow: 0 0 0 2px var(--accent-soft); }
+.overview-tile__idx { font-size: 0.72rem; letter-spacing: 0.06em; text-transform: uppercase; color: var(--accent); }
+.overview-tile__title { font-size: 0.95rem; line-height: 1.35; color: var(--text); }
+
+/* #00455 — keyboard help dialog. */
+.help::backdrop { background: rgba(11, 16, 32, 0.7); backdrop-filter: blur(4px); }
+.help {
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  background: var(--panel);
+  color: var(--text);
+  padding: 0;
+  max-width: 440px;
+  width: min(440px, 92vw);
+  box-shadow: var(--shadow);
+}
+.help-card { padding: 22px 24px; display: flex; flex-direction: column; gap: 14px; }
+.help-title { font-size: 0.85rem; letter-spacing: 0.06em; text-transform: uppercase; color: var(--muted); }
+.help-list {
+  display: grid;
+  grid-template-columns: max-content 1fr;
+  gap: 6px 14px;
+  margin: 0;
+}
+.help-list dt { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; color: var(--accent); }
+.help-list dd { margin: 0; color: var(--text); font-size: 0.95rem; }
+.help-close {
+  align-self: flex-end;
+  background: transparent;
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  padding: 6px 16px;
+  color: var(--text);
+  cursor: pointer;
+  font-family: inherit;
+  font-size: 0.9rem;
+}
+.help-close:hover, .help-close:focus-visible { background: var(--accent-soft); border-color: var(--accent); outline: none; }
+
+.control-help { font-weight: 700; }
+
 @media (prefers-reduced-motion: reduce) {
   .progress-bar { transition: none; }
+  /* #00454 — disable slide fade animation for users who prefer reduced motion. */
+  .slide { transition: none; }
+  .slide.is-fading { opacity: 1; transform: none; }
+  .overview-tile { transition: none; }
+}
+
+/* #00458 — print stylesheet: each slide on its own A4 landscape page, controls/overlays hidden. */
+@media print {
+  @page { size: A4 landscape; margin: 12mm; }
+  html, body { background: #fff !important; color: #111 !important; overflow: visible !important; height: auto !important; }
+  body { display: block; }
+  .progress, .controls, .hint, .notes, .overview, .help, .skip-link { display: none !important; }
+  .deck { padding: 0 !important; min-height: 0 !important; display: block !important; }
+  .slide {
+    display: grid !important;
+    grid-template-columns: minmax(0, 1.1fr) minmax(0, 1fr) !important;
+    gap: 24px !important;
+    background: #fff !important;
+    box-shadow: none !important;
+    border: 1px solid #ddd !important;
+    color: #111 !important;
+    page-break-after: always;
+    break-after: page;
+    margin: 0 0 12mm;
+    min-height: 180mm;
+    padding: 18mm 16mm !important;
+  }
+  .slide-title { color: #111 !important; }
+  .slide-bullets { color: #333 !important; font-size: 1rem !important; }
+  .slide-bullets li::before { background: #333 !important; box-shadow: none !important; }
+  .slide-image { background-color: #f3f4f8 !important; aspect-ratio: 16 / 10 !important; print-color-adjust: exact; -webkit-print-color-adjust: exact; }
+  .slide.is-fading { opacity: 1 !important; transform: none !important; }
 }

@@ -14,15 +14,27 @@
 
     handle /health {
         header Content-Type application/json
-        respond "{\"status\":\"ok\",\"version\":\"0.5.0\"}" 200
+        respond "{\"status\":\"ok\",\"version\":\"0.6.0\"}" 200
     }
     handle /healthz {
         header Content-Type application/json
-        respond "{\"status\":\"ok\",\"version\":\"0.5.0\"}" 200
+        respond "{\"status\":\"ok\",\"version\":\"0.6.0\"}" 200
     }
     handle /version {
         header Content-Type application/json
-        respond `{"app":"presentation","version":"0.5.0","classification":"tool/public/active"}` 200
+        respond `{"app":"presentation","version":"0.6.0","classification":"tool/public/active"}` 200
+    }
+    handle /robots.txt {
+        header Content-Type "text/plain; charset=utf-8"
+        header Cache-Control "public, max-age=3600"
+        try_files /robots.txt =404
+        file_server
+    }
+    handle /sitemap.xml {
+        header Content-Type "application/xml; charset=utf-8"
+        header Cache-Control "public, max-age=3600"
+        try_files /sitemap.xml =404
+        file_server
     }
 
     @static path_regexp static \.((jpg|jpeg|png|gif|svg|ico|css|js|woff2?|ttf|webmanifest|json))$
