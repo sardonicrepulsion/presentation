@@ -256,6 +256,7 @@ body.is-fullscreen .controls:focus-within {
 }
 
 /* #00456 — speaker notes panel (S toggles). */
+.notes[hidden] { display: none !important; }
 .notes {
   position: fixed;
   left: 50%;
@@ -298,6 +299,7 @@ body.is-fullscreen .controls:focus-within {
 .notes-empty { color: var(--muted); font-style: italic; }
 
 /* #00457 — overview grid (O toggles). */
+.overview[hidden] { display: none !important; }
 .overview {
   position: fixed;
   inset: 0;
