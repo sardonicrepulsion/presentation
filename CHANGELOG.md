@@ -7,6 +7,35 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.8.0] - 2026-05-11
+
+### Changed
+- **Root deck replaced with v2 single-file SRcore presentation.** New deck
+  delivered as a final HTML+CSS+JS bundle by the content owner (10 screen
+  captures + dedicated content slides). Old deck (0.7.x) remains served under
+  `/old/` via the existing snapshot mechanism (#00485). Dockerfile copies
+  `index.v2.html` over `/srv/index.html` and adds `/srv/screens/` after the
+  snapshot step.
+- Caddyfile CSP temporarily allows `'unsafe-inline'` for `script-src` and
+  `style-src` and drops the Trusted Types directive — v2 bundle has inline
+  `<script>` + `<style>` blocks and no Trusted Types policy. Followup task
+  #644 extracts inline assets and restores strict CSP + Trusted Types.
+
+### Added
+- `index.v2.html` — single-file v2 deck (39KB, inline CSS + inline JS, deck
+  navigation, dots, fullscreen, touch swipe).
+- `screens/` — 10 PNG screen captures referenced by v2 deck slides
+  (dashboard, tasks, task-detail, task-edit, projects, project-detail,
+  categories, models, settings, more).
+
+### SRcore tasks
+- #640 nasadiť v2 deck (this PR)
+- #641 Caddyfile inline allowance (this PR)
+- #642 version bump 0.7.1 → 0.8.0 (this PR)
+- #643 deploy + smoke (this PR + post-merge verify)
+- #644 CSP hardening — extract inline JS+CSS (followup, READY)
+- #645 audit slide content vs reálne SRcore funkcie (followup, READY)
+
 ## [0.7.1] - 2026-05-11
 
 ### Added

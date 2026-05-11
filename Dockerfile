@@ -24,4 +24,9 @@ RUN mkdir -p /srv/old && \
     sed -i "s|'/data/slides.json'|'/old/data/slides.json'|g" /srv/old/js/app.js && \
     sed -i 's|<meta charset="utf-8">|<meta charset="utf-8">\n  <meta name="robots" content="noindex,nofollow">|' /srv/old/index.html
 
+# v0.8.0 — replace root deck with v2 single-file SRcore presentation.
+# Old deck remains served under /old/ via the snapshot above.
+COPY index.v2.html /srv/index.html
+COPY screens/ /srv/screens/
+
 EXPOSE 80
