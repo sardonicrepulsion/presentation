@@ -13,7 +13,7 @@
         eyebrow: "Dashboard",
         title: "Rýchly prehľad stavu práce",
         subtitle: "Dashboard zhŕňa aktuálny stav taskov a aktivitu systému bez potreby prechádzať do detailov.",
-        bullets: ["Summary cards pre open, in-progress, done, blocked a total", "Status breakdown a recent tasks pre operatívny prehľad", "Time tracking agregovaný podľa projektu a stage"],
+        bullets: ["Summary cards pre tokens, tasks, projects, times…", "Status breakdown a recent tasks pre operatívny prehľad", "Time tracking agregovaný podľa projektu a stage"],
         labels: ["dashboard", "status", "time tracking"],
         image: "./screens/dashboard.png",
         imageAlt: "Dashboard so summary kartami a prehľadmi"
@@ -67,7 +67,7 @@
         eyebrow: "Katalógy",
         title: "Kategórie a prístupové dáta",
         subtitle: "SRcore drží aj podporné katalógy, ktoré majú vplyv na editáciu taskov a riadenie prístupu.",
-        bullets: ["Kategórie sa dajú čítať cez API a admin ich vie vytvárať alebo upravovať", "Používatelia sú mapovaní z Central Login a majú role user, admin alebo auditor", "Audit log je dostupný pre admin/auditor cez samostatnú route"],
+        bullets: ["Kategórie sa dajú čítať cez API a admin ich vie vytvárať alebo upravovať", "Používatelia sú mapovaní z Central Login a majú role user, agent, admin alebo auditor", "Audit log je dostupný pre admin/auditor cez samostatnú route"],
         labels: ["categories", "users", "audit"],
         image: "./screens/categories.png",
         imageAlt: "Katalóg kategórií"
@@ -85,7 +85,7 @@
         eyebrow: "Bezpečnosť",
         title: "Auth, audit a podpísané payloady",
         subtitle: "Zápisy sú chránené cez roly, CSRF pri browser cookie flow a audit log pre povolené aj odmietnuté operácie.",
-        bullets: ["App shell aj /api/* sú za SSO/JWT bránou, verejné sú len health, version a GitHub webhook", "Write endpointy zapisujú allowed, denied aj high-risk vetvy do audit logu", "Inbound aj outbound webhooky používajú HMAC-SHA256 podpisy"],
+        bullets: ["App shell aj /api/* sú za SSO/JWT bránou, verejné sú len health, version, GitHub webhook a sanitizované /api/public/projects", "Write endpointy zapisujú allowed, denied aj high-risk vetvy do audit logu", "Inbound aj outbound webhooky používajú HMAC-SHA256 podpisy"],
         labels: ["SSO/JWT", "CSRF", "HMAC"],
         image: "./screens/settings.png",
         imageAlt: "Nastavenia aplikácie"
