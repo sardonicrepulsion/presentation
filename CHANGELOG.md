@@ -7,6 +7,25 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.9.0] - 2026-05-11
+
+### Changed
+- **CSP hardening — inline JS+CSS extracted (task #644).** The v2 deck inline
+  `<style>` (545 lines) and inline `<script>` (442 lines) are extracted to
+  `/v2/styles.css` and `/v2/deck.js` respectively. `index.v2.html` now links
+  them as external resources.
+- Caddyfile CSP restored to strict `script-src 'self'` / `style-src 'self'`
+  (drop `'unsafe-inline'` allowance added in 0.8.0).
+- Trusted Types directive intentionally NOT re-added: v2 `deck.js` uses
+  `innerHTML` for slide rendering without a TT policy. Followup task will
+  refactor to safe DOM APIs (`textContent` + `replaceChildren`) before
+  re-adding `require-trusted-types-for 'script'`.
+- Dockerfile copies `v2/` into `/srv/v2/`.
+
+### Added
+- `v2/styles.css` — v2 deck stylesheet (extracted).
+- `v2/deck.js` — v2 deck logic (extracted, `defer`-loaded).
+
 ## [0.8.0] - 2026-05-11
 
 ### Changed
