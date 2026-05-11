@@ -7,6 +7,25 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.9.1] - 2026-05-11
+
+### Changed
+- **Slide content fixes from audit (#645).** Three factual inaccuracies
+  flagged during the post-deploy audit, fixed per content owner's
+  direction (Telegram, 2026-05-11):
+  - Slide 2 (Dashboard) bullet 1: was "Summary cards pre open,
+    in-progress, done, blocked a total"; now "Summary cards pre tokens,
+    tasks, projects, times…" (matches actual dashboard composition:
+    summary cards + tokens widget + tasks/projects counts + time
+    tracking).
+  - Slide 8 (Katalógy) bullet 2: was "role user, admin alebo auditor";
+    now "role user, agent, admin alebo auditor" (matches
+    `core_users.role` enum).
+  - Slide 10 (Bezpečnosť) bullet 1: was "verejné sú len health, version
+    a GitHub webhook"; now "verejné sú len health, version, GitHub
+    webhook a sanitizované /api/public/projects" (matches Portal
+    integration, memory: Portal ↔ SRcore #00626).
+
 ## [0.9.0] - 2026-05-11
 
 ### Changed
