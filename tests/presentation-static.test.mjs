@@ -30,14 +30,18 @@ test('version.json shape', () => {
   assert.match(versionJson.classification, /^[a-z]+\/[a-z]+\/[a-z]+$/);
 });
 
-// v0.8.0 — CSP relaxed for v2 single-file bundle ('unsafe-inline' allowed for
-// script-src + style-src). 'unsafe-eval' and https: wildcards still forbidden.
-// Followup #644 will extract inline JS/CSS and restore strict CSP + Trusted Types.
-test('Caddyfile has CSP with reasonable scope', () => {
+// v0.9.0 — strict CSP restored after #644 extraction of inline JS+CSS.
+// 'unsafe-inline' must not appear in script-src or style-src. Trusted Types
+// is still off pending a deck refactor away from innerHTML.
+test('Caddyfile has strict CSP (script-src/style-src self only)', () => {
   assert.ok(caddy.includes('Content-Security-Policy'), 'CSP header present');
   assert.doesNotMatch(caddy, /'unsafe-eval'/, "CSP must not allow 'unsafe-eval'");
+  assert.doesNotMatch(caddy, /script-src[^;]*'unsafe-inline'/, "script-src must not allow 'unsafe-inline'");
+  assert.doesNotMatch(caddy, /style-src[^;]*'unsafe-inline'/, "style-src must not allow 'unsafe-inline'");
   assert.doesNotMatch(caddy, /script-src[^;]*\bhttps:[^a-z]/, 'script-src must not have https: wildcard');
   assert.doesNotMatch(caddy, /img-src[^;]*\bhttps:[^a-z]/, 'img-src must not have https: wildcard');
+  assert.ok(caddy.includes("script-src 'self'"), "script-src 'self'");
+  assert.ok(caddy.includes("style-src 'self'"), "style-src 'self'");
   assert.ok(caddy.includes("frame-ancestors 'none'"), 'frame-ancestors none');
   assert.ok(caddy.includes("object-src 'none'"), 'object-src none');
   assert.ok(caddy.includes("default-src 'self'"), "default-src 'self'");
@@ -212,19 +216,32 @@ test('/old/ SEO hygiene — robots Disallow + Dockerfile noindex inject', () => 
   assert.match(df, /\/srv\/old\/index\.html/, 'Dockerfile noindex inject targets /srv/old/index.html');
 });
 
-// v0.8.0 — v2 single-file SRcore deck overrides root after snapshot.
-test('v0.8.0 — v2 deck file present + Dockerfile wires it to /', () => {
+// v0.9.0 — v2 deck links external /v2/styles.css + /v2/deck.js (strict CSP).
+test('v0.9.0 — v2 deck file links external /v2/* assets, no inline JS+CSS', () => {
   assert.ok(existsSync('index.v2.html'), 'index.v2.html present');
   const v2 = readFileSync('index.v2.html', 'utf8');
   assert.match(v2, /<html\b[^>]*lang="sk"/, 'v2 lang="sk"');
   assert.match(v2, /<title>[^<]*SRcore[^<]*<\/title>/, 'v2 title mentions SRcore');
-  assert.doesNotMatch(v2, /<link\b[^>]*\brel=["']stylesheet["']/, 'v2 has no external stylesheet');
-  assert.doesNotMatch(v2, /<script\b[^>]*\bsrc=/, 'v2 has no external script src');
-  assert.doesNotMatch(v2, /javascript:/, 'v2 has no javascript: URL');
+  assert.match(v2, /<link\s+rel="stylesheet"\s+href="\/v2\/styles\.css">/, 'v2 links /v2/styles.css');
+  assert.match(v2, /<script\s+src="\/v2\/deck\.js"\s+defer><\/script>/, 'v2 loads /v2/deck.js with defer');
+  assert.doesNotMatch(v2, /<style[^>]*>[\s\S]*?<\/style>/, 'no inline <style> block');
+  assert.doesNotMatch(v2, /<script(?![^>]*\bsrc=)[^>]*>[\s\S]+?<\/script>/, 'no inline executable <script> body');
+  assert.doesNotMatch(v2, /\sstyle="/, 'no inline style="" attribute');
+  assert.doesNotMatch(v2, /\son\w+=["']/, 'no inline on*= handler');
+  assert.doesNotMatch(v2, /javascript:/, 'no javascript: URL');
+
+  assert.ok(existsSync('v2/styles.css'), 'v2/styles.css present');
+  assert.ok(existsSync('v2/deck.js'), 'v2/deck.js present');
+  const v2css = readFileSync('v2/styles.css', 'utf8');
+  const v2js = readFileSync('v2/deck.js', 'utf8');
+  assert.ok(v2css.length > 1000, 'v2/styles.css non-trivial');
+  assert.ok(v2js.length > 1000, 'v2/deck.js non-trivial');
+  assert.doesNotMatch(v2js, /createElement\(\s*['"]style['"]\s*\)/, 'v2/deck.js does not inject inline <style>');
 
   const df = readFileSync('Dockerfile', 'utf8');
   assert.match(df, /COPY index\.v2\.html \/srv\/index\.html/, 'Dockerfile copies v2 over /srv/index.html');
   assert.match(df, /COPY screens\/ \/srv\/screens\//, 'Dockerfile copies screens/');
+  assert.match(df, /COPY v2\/ \/srv\/v2\//, 'Dockerfile copies v2/');
 });
 
 // v0.8.0 — 10 PNG screen captures referenced by v2 slides.
