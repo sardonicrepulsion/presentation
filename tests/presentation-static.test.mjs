@@ -199,3 +199,12 @@ test('Dockerfile builds self-contained /old snapshot', () => {
   assert.match(df, /\/old\/manifest\.webmanifest/, 'rewrites /manifest.webmanifest → /old/manifest.webmanifest');
   assert.match(df, /\/old\/data\/slides\.json/, 'rewrites fetch path in js/app.js to /old/data/slides.json');
 });
+
+// #00490 — /old/ SEO hygiene: robots.txt Disallow + noindex meta in snapshot index.html.
+test('/old/ SEO hygiene — robots Disallow + Dockerfile noindex inject', () => {
+  const robots = readFileSync('robots.txt', 'utf8');
+  assert.match(robots, /Disallow:\s*\/old\//, 'robots.txt disallows /old/');
+  const df = readFileSync('Dockerfile', 'utf8');
+  assert.match(df, /name="robots" content="noindex,nofollow"/, 'Dockerfile injects noindex meta into /srv/old/index.html');
+  assert.match(df, /\/srv\/old\/index\.html/, 'Dockerfile noindex inject targets /srv/old/index.html');
+});

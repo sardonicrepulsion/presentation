@@ -7,6 +7,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.7.1] - 2026-05-11
+
+### Added
+- **`/old/` SEO hygiene.** `robots.txt` now `Disallow: /old/` so the snapshot is not indexed. Dockerfile snapshot step also injects `<meta name="robots" content="noindex,nofollow">` into `/srv/old/index.html` for crawlers that ignore robots.txt. Static test asserts both pieces of the Dockerfile pipeline.
+
 ## [0.7.0] - 2026-05-11
 
 ### Added
