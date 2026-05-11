@@ -21,6 +21,7 @@ RUN mkdir -p /srv/old && \
         -e 's|"/data/|"/old/data/|g' \
         -e 's|"/manifest.webmanifest|"/old/manifest.webmanifest|g' \
         /srv/old/index.html /srv/old/data/slides.json && \
-    sed -i "s|'/data/slides.json'|'/old/data/slides.json'|g" /srv/old/js/app.js
+    sed -i "s|'/data/slides.json'|'/old/data/slides.json'|g" /srv/old/js/app.js && \
+    sed -i 's|<meta charset="utf-8">|<meta charset="utf-8">\n  <meta name="robots" content="noindex,nofollow">|' /srv/old/index.html
 
 EXPOSE 80
