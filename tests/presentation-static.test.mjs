@@ -30,14 +30,17 @@ test('version.json shape', () => {
   assert.match(versionJson.classification, /^[a-z]+\/[a-z]+\/[a-z]+$/);
 });
 
-test('Caddyfile has strict CSP', () => {
+// v0.8.0 — CSP relaxed for v2 single-file bundle ('unsafe-inline' allowed for
+// script-src + style-src). 'unsafe-eval' and https: wildcards still forbidden.
+// Followup #644 will extract inline JS/CSS and restore strict CSP + Trusted Types.
+test('Caddyfile has CSP with reasonable scope', () => {
   assert.ok(caddy.includes('Content-Security-Policy'), 'CSP header present');
-  assert.doesNotMatch(caddy, /'unsafe-inline'/, "CSP must not allow 'unsafe-inline'");
   assert.doesNotMatch(caddy, /'unsafe-eval'/, "CSP must not allow 'unsafe-eval'");
   assert.doesNotMatch(caddy, /script-src[^;]*\bhttps:[^a-z]/, 'script-src must not have https: wildcard');
   assert.doesNotMatch(caddy, /img-src[^;]*\bhttps:[^a-z]/, 'img-src must not have https: wildcard');
-  assert.ok(caddy.includes("require-trusted-types-for 'script'"), 'Trusted Types required');
-  assert.ok(caddy.includes('trusted-types presentation-template'), 'Trusted Types policy named');
+  assert.ok(caddy.includes("frame-ancestors 'none'"), 'frame-ancestors none');
+  assert.ok(caddy.includes("object-src 'none'"), 'object-src none');
+  assert.ok(caddy.includes("default-src 'self'"), "default-src 'self'");
 });
 
 test('Caddyfile has security headers', () => {
@@ -207,4 +210,38 @@ test('/old/ SEO hygiene — robots Disallow + Dockerfile noindex inject', () => 
   const df = readFileSync('Dockerfile', 'utf8');
   assert.match(df, /name="robots" content="noindex,nofollow"/, 'Dockerfile injects noindex meta into /srv/old/index.html');
   assert.match(df, /\/srv\/old\/index\.html/, 'Dockerfile noindex inject targets /srv/old/index.html');
+});
+
+// v0.8.0 — v2 single-file SRcore deck overrides root after snapshot.
+test('v0.8.0 — v2 deck file present + Dockerfile wires it to /', () => {
+  assert.ok(existsSync('index.v2.html'), 'index.v2.html present');
+  const v2 = readFileSync('index.v2.html', 'utf8');
+  assert.match(v2, /<html\b[^>]*lang="sk"/, 'v2 lang="sk"');
+  assert.match(v2, /<title>[^<]*SRcore[^<]*<\/title>/, 'v2 title mentions SRcore');
+  assert.doesNotMatch(v2, /<link\b[^>]*\brel=["']stylesheet["']/, 'v2 has no external stylesheet');
+  assert.doesNotMatch(v2, /<script\b[^>]*\bsrc=/, 'v2 has no external script src');
+  assert.doesNotMatch(v2, /javascript:/, 'v2 has no javascript: URL');
+
+  const df = readFileSync('Dockerfile', 'utf8');
+  assert.match(df, /COPY index\.v2\.html \/srv\/index\.html/, 'Dockerfile copies v2 over /srv/index.html');
+  assert.match(df, /COPY screens\/ \/srv\/screens\//, 'Dockerfile copies screens/');
+});
+
+// v0.8.0 — 10 PNG screen captures referenced by v2 slides.
+test('v0.8.0 — screens/*.png present', () => {
+  const required = [
+    'screens/dashboard.png',
+    'screens/tasks.png',
+    'screens/task-detail.png',
+    'screens/task-edit.png',
+    'screens/projects.png',
+    'screens/project-detail.png',
+    'screens/categories.png',
+    'screens/models.png',
+    'screens/settings.png',
+    'screens/more.png',
+  ];
+  for (const p of required) {
+    assert.ok(existsSync(p), `${p} exists`);
+  }
 });
