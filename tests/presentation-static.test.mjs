@@ -186,3 +186,16 @@ test('manifest icon assets exist', () => {
     assert.ok(existsSync(path), `icon ${path} exists`);
   }
 });
+
+// #00485 — Dockerfile snapshots the deck under /srv/old with absolute paths rewritten
+// to /old/* so the root slot can be replaced by the next deck without breaking history.
+test('Dockerfile builds self-contained /old snapshot', () => {
+  const df = readFileSync('Dockerfile', 'utf8');
+  assert.match(df, /mkdir -p \/srv\/old/, 'creates /srv/old');
+  assert.match(df, /\/old\/assets\//, 'rewrites /assets/ → /old/assets/');
+  assert.match(df, /\/old\/css\//, 'rewrites /css/ → /old/css/');
+  assert.match(df, /\/old\/js\//, 'rewrites /js/ → /old/js/');
+  assert.match(df, /\/old\/data\//, 'rewrites /data/ → /old/data/');
+  assert.match(df, /\/old\/manifest\.webmanifest/, 'rewrites /manifest.webmanifest → /old/manifest.webmanifest');
+  assert.match(df, /\/old\/data\/slides\.json/, 'rewrites fetch path in js/app.js to /old/data/slides.json');
+});

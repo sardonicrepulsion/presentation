@@ -7,6 +7,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.7.0] - 2026-05-11
+
+### Added
+- **`/old/` snapshot route.** Dockerfile build now duplicates the current deck (index.html + css + js + data + assets + manifest) under `/srv/old/` and rewrites the absolute asset paths to `/old/...`. The next presentation can replace the root slot without breaking the historical copy. Static test guards the Dockerfile snapshot step.
+
 ## [0.6.1] - 2026-05-10
 
 ### Fixed
