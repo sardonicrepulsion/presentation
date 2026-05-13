@@ -7,6 +7,25 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.10.3] - 2026-05-13
+
+### Fixed
+- **forward_auth redirect loop — final fix (#721).** v0.10.2 sent the
+  original host as query-string args to login `/verify`, but Caddy's
+  `forward_auth` does **not** expand placeholders inside the `uri`
+  sub-directive — it sent the literal text `{http.request.host}` to
+  the upstream, which login.validateRedirect rejected with `400`. The
+  gate stops the leak (good) but the user-visible response is a JSON
+  400 with no redirect (bad).
+- v0.10.3 keeps the upstream URI plain (`/verify`) and composes the
+  post-login redirect locally in a `handle_response @bad` block. Local
+  Caddy placeholders are guaranteed to expand server-side in this Caddy
+  instance, so the redirect can never be lost across the proxy chain.
+  `@bad` matches status `401 302` so both the no-cookie path and the
+  legacy self-host fallback that login still emits route through our
+  own `redir`. login v1.3.0 query-arg handling stays in place but the
+  presentation gate no longer depends on it.
+
 ## [0.10.2] - 2026-05-13
 
 ### Fixed
