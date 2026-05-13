@@ -2,7 +2,7 @@
     root * /srv
     encode gzip zstd
     header {
-        # v0.10.0 — smoke variant of Caddyfile. Production runs an SSO gate against
+        # v0.10.1 — smoke variant of Caddyfile. Production runs an SSO gate against
         # login.sardonicrepulsion.com to protect this access=internal deck; CI smoke
         # has no JWT cookie so the gate would 302 every request. Smoke build mounts
         # this variant over /etc/caddy/Caddyfile so docker/playwright smoke can
@@ -19,15 +19,15 @@
 
     handle /health {
         header Content-Type application/json
-        respond "{\"status\":\"ok\",\"version\":\"0.10.0\"}" 200
+        respond "{\"status\":\"ok\",\"version\":\"0.10.1\"}" 200
     }
     handle /healthz {
         header Content-Type application/json
-        respond "{\"status\":\"ok\",\"version\":\"0.10.0\"}" 200
+        respond "{\"status\":\"ok\",\"version\":\"0.10.1\"}" 200
     }
     handle /version {
         header Content-Type application/json
-        respond `{"app":"presentation","version":"0.10.0","classification":"tool/public/active"}` 200
+        respond `{"app":"presentation","version":"0.10.1","classification":"tool/public/active"}` 200
     }
     handle /robots.txt {
         header Content-Type "text/plain; charset=utf-8"
