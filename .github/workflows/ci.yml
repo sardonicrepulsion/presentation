@@ -7,14 +7,14 @@ on:
 
 jobs:
   static-tests:
-    runs-on: [self-hosted, sardonic-arm64-presentation]
+    runs-on: [self-hosted, Linux, ARM64, org-pool]
     steps:
       - uses: actions/checkout@v4
       - name: Run static tests
         run: node --test tests/*.test.mjs
 
   version-consistency:
-    runs-on: [self-hosted, sardonic-arm64-presentation]
+    runs-on: [self-hosted, Linux, ARM64, org-pool]
     steps:
       - uses: actions/checkout@v4
       - name: Check VERSION matches version.json + Caddyfile
@@ -27,7 +27,7 @@ jobs:
           echo "version-consistency OK: $v"
 
   docker-build:
-    runs-on: [self-hosted, sardonic-arm64-presentation]
+    runs-on: [self-hosted, Linux, ARM64, org-pool]
     steps:
       - uses: actions/checkout@v4
       - name: Set up Docker Buildx
@@ -42,7 +42,7 @@ jobs:
 
   smoke:
     needs: docker-build
-    runs-on: [self-hosted, sardonic-arm64-presentation]
+    runs-on: [self-hosted, Linux, ARM64, org-pool]
     steps:
       - uses: actions/checkout@v4
       - name: Set up Docker Buildx
@@ -56,6 +56,10 @@ jobs:
           tags: presentation:smoke-${{ github.sha }}
       - name: Run container
         run: |
+          docker rm -f presentation-smoke 2>/dev/null || true
+          exec 9>>/tmp/docker-smoke.lock
+          flock -w 600 -x 9
+          trap 'docker rm -f presentation-smoke 2>/dev/null || true' EXIT
           docker run -d --name presentation-smoke -p 18080:80 presentation:smoke-${{ github.sha }}
           for i in 1 2 3 4 5 6 7 8 9 10; do
             if curl -fsS http://localhost:18080/healthz > /dev/null; then
@@ -75,7 +79,7 @@ jobs:
 
   playwright-smoke:
     needs: docker-build
-    runs-on: [self-hosted, sardonic-arm64-presentation]
+    runs-on: [self-hosted, Linux, ARM64, org-pool]
     steps:
       - uses: actions/checkout@v4
       - name: Set up Docker Buildx
@@ -89,6 +93,10 @@ jobs:
           tags: presentation:pw-${{ github.sha }}
       - name: Run container
         run: |
+          docker rm -f presentation-pw 2>/dev/null || true
+          exec 9>>/tmp/docker-smoke.lock
+          flock -w 600 -x 9
+          trap 'docker rm -f presentation-pw 2>/dev/null || true' EXIT
           docker run -d --name presentation-pw -p 18080:80 presentation:pw-${{ github.sha }}
           for i in 1 2 3 4 5 6 7 8 9 10; do
             if curl -fsS http://localhost:18080/healthz > /dev/null; then
