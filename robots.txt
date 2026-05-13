@@ -1,0 +1,5 @@
+User-agent: *
+Allow: /
+Disallow: /old/
+
+Sitemap: https://presentation.sardonicrepulsion.com/sitemap.xml

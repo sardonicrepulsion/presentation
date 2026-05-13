@@ -1,0 +1,100 @@
+<!doctype html>
+<html lang="sk">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#0b1020">
+  <meta name="description" content="SRcore presentation deck — interný systém riadenia projektov a AI agentov. Image-left + bullets-right layout, keyboard + touch nav, speaker notes, overview grid, print-friendly.">
+  <title>Presentation — SRcore</title>
+  <link rel="canonical" href="https://presentation.sardonicrepulsion.com/">
+  <link rel="icon" type="image/svg+xml" href="/assets/icons/icon-192.svg">
+  <link rel="manifest" href="/manifest.webmanifest">
+  <link rel="stylesheet" href="/css/app.css">
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="SRcore — interný systém na riadenie projektov">
+  <meta property="og:description" content="Zdroj pravdy pre projekty, úlohy a AI agentov. 25 aplikácií · 460 úloh.">
+  <meta property="og:url" content="https://presentation.sardonicrepulsion.com/">
+  <meta property="og:image" content="https://presentation.sardonicrepulsion.com/assets/img/og-image.svg">
+  <meta property="og:locale" content="sk_SK">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="SRcore — interný systém na riadenie projektov">
+  <meta name="twitter:description" content="Zdroj pravdy pre projekty, úlohy a AI agentov.">
+  <meta name="twitter:image" content="https://presentation.sardonicrepulsion.com/assets/img/og-image.svg">
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "WebApplication",
+    "name": "SRcore presentation",
+    "description": "Slide deck about SRcore — internal source-of-truth task and project system used by humans and AI agents.",
+    "url": "https://presentation.sardonicrepulsion.com/",
+    "applicationCategory": "BusinessApplication",
+    "operatingSystem": "Any (HTML5)",
+    "browserRequirements": "Requires JavaScript. Requires HTML5.",
+    "inLanguage": "sk",
+    "isAccessibleForFree": true,
+    "creator": { "@type": "Person", "name": "Peter Boda" }
+  }
+  </script>
+  <script src="/js/app.js" defer></script>
+</head>
+<body>
+  <a class="skip-link" href="#main">Skip to main</a>
+
+  <div id="progress" class="progress" role="progressbar" aria-label="Slide progress" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0">
+    <div class="progress-bar" id="progress-bar"></div>
+  </div>
+
+  <main id="main" class="deck" tabindex="-1">
+    <section id="slide" class="slide" aria-live="polite">
+      <div class="slide-image" id="slide-image" aria-hidden="true"></div>
+      <div class="slide-body">
+        <h1 class="slide-title" id="slide-title">Loading…</h1>
+        <ul class="slide-bullets" id="slide-bullets"></ul>
+      </div>
+    </section>
+  </main>
+
+  <aside id="notes" class="notes" hidden aria-label="Speaker notes" aria-hidden="true">
+    <div class="notes-head">
+      <strong class="notes-title">Speaker notes</strong>
+      <button type="button" class="notes-close" id="notes-close" data-action="toggle-notes" aria-label="Hide speaker notes">×</button>
+    </div>
+    <div class="notes-body" id="notes-body"></div>
+  </aside>
+
+  <section id="overview" class="overview" hidden aria-label="Slide overview" aria-hidden="true">
+    <div class="overview-head">
+      <strong class="overview-title">Overview</strong>
+      <button type="button" class="overview-close" data-action="toggle-overview" aria-label="Close overview">×</button>
+    </div>
+    <ol class="overview-grid" id="overview-grid" role="list"></ol>
+  </section>
+
+  <dialog id="help" class="help" aria-label="Keyboard shortcuts">
+    <div class="help-card">
+      <strong class="help-title">Keyboard shortcuts</strong>
+      <dl class="help-list">
+        <dt>← / PageUp</dt><dd>Previous slide</dd>
+        <dt>→ / PageDown / Space</dt><dd>Next slide</dd>
+        <dt>Home / End</dt><dd>First / last slide</dd>
+        <dt>F</dt><dd>Toggle fullscreen</dd>
+        <dt>S</dt><dd>Toggle speaker notes</dd>
+        <dt>O</dt><dd>Toggle overview grid</dd>
+        <dt>?</dt><dd>Show this help</dd>
+        <dt>Esc</dt><dd>Close overlay / exit fullscreen</dd>
+      </dl>
+      <button type="button" class="help-close" data-action="toggle-help">Close</button>
+    </div>
+  </dialog>
+
+  <nav class="controls" aria-label="Slide controls">
+    <button type="button" class="control" id="prev" aria-label="Previous slide" data-action="prev">‹</button>
+    <span class="counter" id="counter" aria-live="polite">–</span>
+    <button type="button" class="control" id="next" aria-label="Next slide" data-action="next">›</button>
+    <button type="button" class="control control-help" id="help-btn" aria-label="Keyboard shortcuts" data-action="toggle-help">?</button>
+    <button type="button" class="control control-fs" id="fullscreen" aria-label="Toggle fullscreen" data-action="fullscreen">⛶</button>
+  </nav>
+
+  <div class="hint" id="hint" role="note">← / → · Home / End · F fullscreen · S notes · O overview · ? help · Esc</div>
+</body>
+</html>

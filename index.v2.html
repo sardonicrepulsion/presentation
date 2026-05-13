@@ -1,0 +1,67 @@
+<!doctype html>
+<html lang="sk">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="description" content="Prezentácia SRcore: task management pre AI agentov, workflow, audit, projekty a integrácie." />
+  <meta property="og:title" content="SRcore Tasks &amp; AI Agents" />
+  <meta property="og:description" content="Task management pre AI agentov s kontrolovaným workflow a auditom." />
+  <meta property="og:type" content="website" />
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='16' fill='%2306b6d4'/%3E%3Cpath d='M24 18l24 14-24 14z' fill='white'/%3E%3C/svg%3E" />
+  <title>SRcore Tasks &amp; AI Agents</title>
+  <link rel="stylesheet" href="/v2/styles.css">
+  <!-- v0.9.0 — inline style+script extracted to /v2/* for strict CSP. -->
+</head>
+<body>
+  <a class="skip-link" href="#slideTitle">Preskočiť na obsah slajdu</a>
+  <main class="app">
+    <header class="topbar">
+      <div class="brand">
+        <span class="brand-mark" aria-hidden="true">▶</span>
+        <span>Tasks &amp; AI Agents</span>
+      </div>
+      <div class="hint" aria-label="Nápoveda ovládania">
+        <span>Ovládanie:</span>
+        <button class="key-button" id="hintPrevBtn" type="button" aria-label="Predchádzajúci slajd">←</button>
+        <button class="key-button" id="hintNextBtn" type="button" aria-label="Nasledujúci slajd">→</button>
+        <button class="key-button" id="hintHomeBtn" type="button" aria-label="Prejsť na prvý slajd">Home</button>
+        <button class="key-button" id="hintEndBtn" type="button" aria-label="Prejsť na posledný slajd">End</button>
+      </div>
+    </header>
+
+    <section class="stage">
+      <button class="nav-button nav-prev" id="prevBtn" type="button" aria-label="Predchádzajúci slajd">
+        <svg width="26" height="26" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M15 18l-6-6 6-6" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </button>
+
+      <article class="slide fade-in" id="slide" tabindex="-1" aria-live="polite" aria-atomic="true" aria-labelledby="slideTitle" aria-describedby="slideSubtitle">
+        <div class="visual-card">
+          <img id="slideImage" alt="Ilustrácia k slajdu" loading="eager" />
+        </div>
+        <div class="content">
+          <div class="eyebrow"><span class="eyebrow-dot"></span><span id="slideEyebrow"></span></div>
+          <h1 id="slideTitle" tabindex="-1"></h1>
+          <p class="subtitle" id="slideSubtitle"></p>
+          <ul class="bullets" id="slideBullets"></ul>
+          <div class="meta-row" id="slideLabels"></div>
+        </div>
+      </article>
+
+      <button class="nav-button nav-next" id="nextBtn" type="button" aria-label="Nasledujúci slajd">
+        <svg width="26" height="26" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M9 18l6-6-6-6" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </button>
+    </section>
+
+    <footer class="bottombar">
+      <div class="progress-wrap" aria-hidden="true"><div class="progress-bar" id="progressBar"></div></div>
+      <nav class="dots" id="dots" aria-label="Výber slajdu"></nav>
+      <div class="tools">
+        <button class="tool-button" id="fullscreenBtn" type="button" title="Režim celej obrazovky">⛶</button>
+        <div class="counter" id="counter" aria-label="Pozícia slajdu"></div>
+      </div>
+    </footer>
+  </main>
+
+  <script src="/v2/deck.js" defer></script>
+</body>
+</html>
