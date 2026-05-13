@@ -7,6 +7,19 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.10.2] - 2026-05-13
+
+### Fixed
+- **forward_auth redirect-loop final fix (#721).** v0.10.1 added `header_up
+  X-Forwarded-Host {http.request.host}` etc., but host-side Caddy strips
+  client-set `X-Forwarded-*` because the in-container proxy isn't on its
+  `trusted_proxies` list, so the override was silently overwritten before
+  reaching the login service. v0.10.2 sends the original host + URI + scheme
+  as query-string args (`?h=&u=&p=`) which survive the proxy chain because
+  they're part of the URL, not a header. login v1.3.0 reads the args, gates
+  the candidate through `validateRedirect()`, then composes the right
+  post-login redirect.
+
 ## [0.10.1] - 2026-05-13
 
 ### Fixed

@@ -64,7 +64,13 @@ test('Caddyfile has health and version handlers', () => {
 // outside the gated handle so monitors can still probe the app anonymously.
 test('Caddyfile has forward_auth gate on catch-all handle (#721)', () => {
   assert.match(caddy, /forward_auth\s+login\.sardonicrepulsion\.com:443/, 'forward_auth directive points at login service');
-  assert.match(caddy, /uri\s+\/verify/, 'forward_auth verifies the /verify endpoint');
+  // v0.10.2 — uri MUST carry original host/uri/scheme as query-string args
+  // (?h=, ?u=, ?p=) so the login service can compose the post-login redirect.
+  // X-Forwarded-* alone is unreliable: host-side Caddy strips client-set
+  // X-Forwarded-* because the in-container proxy is not on its trusted_proxies
+  // list — header overrides got silently overwritten in v0.10.1.
+  assert.match(caddy, /uri\s+\/verify\?h=\{http\.request\.host\}&u=\{http\.request\.uri\.path\}&p=\{http\.request\.scheme\}/,
+    'forward_auth uri must encode original host/uri/scheme as query args (login v1.3.0+ reads them)');
   assert.match(caddy, /tls_server_name\s+login\.sardonicrepulsion\.com/, 'TLS SNI is set so cert is validated');
   // Find the directive line itself (start-of-line + indent + 'forward_auth'),
   // not the explanatory comment in the top `header { }` block.
