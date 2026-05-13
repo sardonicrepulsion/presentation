@@ -7,6 +7,21 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.10.1] - 2026-05-13
+
+### Fixed
+- **forward_auth redirect loop (#721 follow-up).** Live deploy of 0.10.0
+  redirected anonymous visitors to
+  `https://login.sardonicrepulsion.com/login?redirect=https://login.sardonicrepulsion.com:443/`,
+  i.e. the post-login redirect was pointing back at the login domain
+  instead of the presentation host. Caddy's `forward_auth` lifecycle
+  rewrites the outbound `Host` header to the upstream's hostname before
+  it sets `X-Forwarded-Host`, so the login `/verify` endpoint saw the
+  upstream's host. Caddyfile now explicitly sets
+  `header_up X-Forwarded-Host {http.request.host}` (plus the matching
+  `X-Forwarded-Uri` and `X-Forwarded-Proto`) so verify composes the
+  correct return URL.
+
 ## [0.10.0] - 2026-05-13
 
 ### Added
