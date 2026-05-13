@@ -3,7 +3,7 @@
     encode gzip zstd
     header {
         # v0.9.1 — inline JS+CSS extracted to /v2/{styles.css,deck.js}; strict CSP restored. Trusted Types directive intentionally NOT re-added: v2 deck uses innerHTML for slide rendering (without a TT policy) — added back only after deck refactor to safe DOM APIs.
-        # v0.10.2 — access=internal forward_auth gate (see handle block at bottom).
+        # v0.10.3 — access=internal forward_auth gate (see handle block at bottom).
         Content-Security-Policy "default-src 'self'; script-src 'self'; style-src 'self'; img-src 'self' data:; font-src 'self'; connect-src 'self'; media-src 'self'; base-uri 'self'; form-action 'self'; object-src 'none'; frame-ancestors 'none'"
         X-Frame-Options "DENY"
         X-Content-Type-Options "nosniff"
@@ -16,15 +16,15 @@
 
     handle /health {
         header Content-Type application/json
-        respond "{\"status\":\"ok\",\"version\":\"0.10.2\"}" 200
+        respond "{\"status\":\"ok\",\"version\":\"0.10.3\"}" 200
     }
     handle /healthz {
         header Content-Type application/json
-        respond "{\"status\":\"ok\",\"version\":\"0.10.2\"}" 200
+        respond "{\"status\":\"ok\",\"version\":\"0.10.3\"}" 200
     }
     handle /version {
         header Content-Type application/json
-        respond `{"app":"presentation","version":"0.10.2","classification":"tool/public/active"}` 200
+        respond `{"app":"presentation","version":"0.10.3","classification":"tool/public/active"}` 200
     }
     handle /robots.txt {
         header Content-Type "text/plain; charset=utf-8"
@@ -43,24 +43,31 @@
     header @static Cache-Control "public, max-age=86400"
 
     handle {
-        # v0.10.2 — access=internal gate (SRcore #721). Verifies SSO cookie via
+        # v0.10.3 — access=internal gate (SRcore #721). Verifies SSO cookie via
         # login.sardonicrepulsion.com/verify; unauth requests get 302 to login.
         # /health /healthz /version handled above so monitors stay public.
         #
-        # The original host + uri travel as QUERY-STRING args (?h=, ?u=, ?p=)
-        # rather than X-Forwarded-* headers because host-side Caddy strips
-        # client-set X-Forwarded-* headers when the upstream is not in its
-        # `trusted_proxies` list — so v0.10.2's header_up directives were
-        # silently overwritten by the time /verify saw them. Query-string args
-        # survive the proxy chain because they're part of the URL. login v1.3.0+
-        # accepts these args and gates each candidate through validateRedirect().
+        # Approach: forward_auth checks the JWT cookie at login /verify. When the
+        # cookie is missing or invalid, /verify returns 401 (or 302 falling back
+        # to its own self-host redirect — see login server.js). We catch non-2xx
+        # statuses with handle_response and emit OUR OWN 302 to login with the
+        # presentation host + path baked into the redirect= param using local
+        # Caddy placeholders — those are guaranteed to be expanded server-side
+        # in this Caddy instance, so they cannot be lost across the proxy chain
+        # (unlike X-Forwarded-Host, which v0.10.1/0.10.3 attempted and host-side
+        # Caddy stripped because the in-container proxy isn't on its
+        # `trusted_proxies` list).
         forward_auth login.sardonicrepulsion.com:443 {
-            uri /verify?h={http.request.host}&u={http.request.uri.path}&p={http.request.scheme}
+            uri /verify
             transport http {
                 tls
                 tls_server_name login.sardonicrepulsion.com
             }
             copy_headers X-Auth-User X-Auth-Role
+            @bad status 401 302
+            handle_response @bad {
+                redir https://login.sardonicrepulsion.com/login?redirect=https%3A%2F%2F{http.request.host}{http.request.uri} 302
+            }
         }
         header Cache-Control "no-cache, must-revalidate"
         try_files {path} {path}/ =404

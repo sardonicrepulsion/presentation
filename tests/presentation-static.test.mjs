@@ -64,13 +64,17 @@ test('Caddyfile has health and version handlers', () => {
 // outside the gated handle so monitors can still probe the app anonymously.
 test('Caddyfile has forward_auth gate on catch-all handle (#721)', () => {
   assert.match(caddy, /forward_auth\s+login\.sardonicrepulsion\.com:443/, 'forward_auth directive points at login service');
-  // v0.10.2 — uri MUST carry original host/uri/scheme as query-string args
-  // (?h=, ?u=, ?p=) so the login service can compose the post-login redirect.
-  // X-Forwarded-* alone is unreliable: host-side Caddy strips client-set
-  // X-Forwarded-* because the in-container proxy is not on its trusted_proxies
-  // list — header overrides got silently overwritten in v0.10.1.
-  assert.match(caddy, /uri\s+\/verify\?h=\{http\.request\.host\}&u=\{http\.request\.uri\.path\}&p=\{http\.request\.scheme\}/,
-    'forward_auth uri must encode original host/uri/scheme as query args (login v1.3.0+ reads them)');
+  // v0.10.3 — uri is plain `/verify`. The redirect URL is composed in a local
+  // handle_response block using {http.request.host} + {http.request.uri}
+  // placeholders that Caddy expands server-side, so they can NEVER be lost
+  // across the proxy chain (which is what broke v0.10.1 / 0.10.2 — host-side
+  // Caddy strips client-set X-Forwarded-*, and Caddy doesn't expand placeholders
+  // inside the `uri` sub-directive of forward_auth so the query-string approach
+  // sent literal `{http.request.host}` text to login /verify).
+  assert.match(caddy, /uri\s+\/verify\b/, 'forward_auth uri is plain /verify');
+  assert.match(caddy, /handle_response\s+@bad/, 'unauth response handled locally via handle_response @bad');
+  assert.match(caddy, /redir\s+https:\/\/login\.sardonicrepulsion\.com\/login\?redirect=https%3A%2F%2F\{http\.request\.host\}\{http\.request\.uri\}/,
+    'unauth redirect composes login URL with placeholders Caddy expands server-side');
   assert.match(caddy, /tls_server_name\s+login\.sardonicrepulsion\.com/, 'TLS SNI is set so cert is validated');
   // Find the directive line itself (start-of-line + indent + 'forward_auth'),
   // not the explanatory comment in the top `header { }` block.
