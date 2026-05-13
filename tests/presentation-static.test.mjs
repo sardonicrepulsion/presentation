@@ -59,6 +59,40 @@ test('Caddyfile has health and version handlers', () => {
   assert.ok(caddy.includes('handle /version'));
 });
 
+// v0.10.0 — access=internal gate. Catch-all handle must forward_auth via
+// login.sardonicrepulsion.com:443/verify; /health /healthz /version remain
+// outside the gated handle so monitors can still probe the app anonymously.
+test('Caddyfile has forward_auth gate on catch-all handle (#721)', () => {
+  assert.match(caddy, /forward_auth\s+login\.sardonicrepulsion\.com:443/, 'forward_auth directive points at login service');
+  assert.match(caddy, /uri\s+\/verify/, 'forward_auth verifies the /verify endpoint');
+  assert.match(caddy, /tls_server_name\s+login\.sardonicrepulsion\.com/, 'TLS SNI is set so cert is validated');
+  // Find the directive line itself (start-of-line + indent + 'forward_auth'),
+  // not the explanatory comment in the top `header { }` block.
+  const healthBlock = caddy.indexOf('handle /health');
+  const gateMatch = caddy.match(/^\s*forward_auth\s+login\.sardonicrepulsion/m);
+  const gateBlock = gateMatch ? caddy.indexOf(gateMatch[0]) : -1;
+  assert.ok(healthBlock !== -1 && gateBlock !== -1 && healthBlock < gateBlock,
+    '/health /healthz /version blocks must precede the gated catch-all so monitors stay public');
+});
+
+// v0.10.0 — Caddyfile.smoke is the CI variant (no forward_auth) so the docker
+// and playwright smoke jobs can hit / without an SSO cookie. Production
+// Caddyfile MUST keep the gate; smoke variant MUST NOT have it. Version
+// literals must stay in lockstep with the production file so a half-bump
+// can't silently drift.
+test('Caddyfile.smoke variant has no forward_auth and matches version (#721)', () => {
+  assert.ok(existsSync('Caddyfile.smoke'), 'Caddyfile.smoke present');
+  const smoke = readFileSync('Caddyfile.smoke', 'utf8');
+  assert.doesNotMatch(smoke, /forward_auth/, 'smoke variant must NOT contain forward_auth (CI has no JWT)');
+  assert.ok(smoke.includes(`"version":"${versionTxt}"`), 'Caddyfile.smoke /version handler matches VERSION');
+  // Smoke variant must still respond to the public endpoints unchanged.
+  for (const h of ['handle /health', 'handle /healthz', 'handle /version']) {
+    assert.ok(smoke.includes(h), `Caddyfile.smoke retains ${h}`);
+  }
+  // Defensive: production must KEEP the gate.
+  assert.match(caddy, /forward_auth/, 'production Caddyfile must contain forward_auth');
+});
+
 test('app.json has healthcheck', () => {
   assert.ok(Array.isArray(appJson.healthchecks?.web));
   assert.ok(appJson.healthchecks.web.length >= 1);

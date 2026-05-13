@@ -7,6 +7,19 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.10.0] - 2026-05-13
+
+### Added
+- **SSO gate for access=internal (SRcore #721).** Presentation is
+  classified `access=internal` in `core_projects` (the SRcore source of
+  truth) but its host has been returning `200 OK` to anonymous visitors
+  since first deploy — a public leak of an internal deck. Caddyfile now
+  performs `forward_auth login.sardonicrepulsion.com:443 /verify` on
+  the catch-all `handle` block; unauthenticated requests get a
+  `302 → login.sardonicrepulsion.com/login?redirect=…`. `/health`,
+  `/healthz`, `/version`, `/robots.txt`, `/sitemap.xml` remain public
+  so health-monitor and version-monitor probes keep working unchanged.
+
 ## [0.9.1] - 2026-05-11
 
 ### Changed

@@ -2,15 +2,18 @@
     root * /srv
     encode gzip zstd
     header {
-        # v0.9.1 — inline JS+CSS extracted to /v2/{styles.css,deck.js}; strict CSP restored. Trusted Types directive intentionally NOT re-added: v2 deck uses innerHTML for slide rendering (without a TT policy) — added back only after deck refactor to safe DOM APIs.
-        # v0.10.0 — access=internal forward_auth gate (see handle block at bottom).
+        # v0.10.0 — smoke variant of Caddyfile. Production runs an SSO gate against
+        # login.sardonicrepulsion.com to protect this access=internal deck; CI smoke
+        # has no JWT cookie so the gate would 302 every request. Smoke build mounts
+        # this variant over /etc/caddy/Caddyfile so docker/playwright smoke can
+        # exercise the deck endpoints. CSP and security headers are identical to
+        # production — the only difference is the absent auth gate on the catch-all.
         Content-Security-Policy "default-src 'self'; script-src 'self'; style-src 'self'; img-src 'self' data:; font-src 'self'; connect-src 'self'; media-src 'self'; base-uri 'self'; form-action 'self'; object-src 'none'; frame-ancestors 'none'"
         X-Frame-Options "DENY"
         X-Content-Type-Options "nosniff"
         Referrer-Policy "strict-origin-when-cross-origin"
         Permissions-Policy "camera=(), microphone=(), geolocation=(), interest-cohort=(), accelerometer=(), autoplay=(), encrypted-media=(), gyroscope=(), magnetometer=(), midi=(), payment=(), usb=(), sync-xhr=()"
         X-Permitted-Cross-Domain-Policies "none"
-        # Strict-Transport-Security, COOP, CORP emitted by host Caddy proxy via dokku caddy:labels:add
         -Server
     }
 
@@ -43,17 +46,6 @@
     header @static Cache-Control "public, max-age=86400"
 
     handle {
-        # v0.10.0 — access=internal gate (SRcore #721). Verifies SSO cookie via
-        # login.sardonicrepulsion.com/verify; unauth requests get 302 to login.
-        # /health /healthz /version handled above so monitors stay public.
-        forward_auth login.sardonicrepulsion.com:443 {
-            uri /verify
-            transport http {
-                tls
-                tls_server_name login.sardonicrepulsion.com
-            }
-            copy_headers X-Auth-User X-Auth-Role
-        }
         header Cache-Control "no-cache, must-revalidate"
         try_files {path} {path}/ =404
         file_server
