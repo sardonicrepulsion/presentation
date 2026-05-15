@@ -1,5 +1,15 @@
 # Changelog
 
+## [0.10.5] - 2026-05-15 — `ci(srcore#775)` — Ephemeral host port + unique container names
+
+### Changed
+- `.github/workflows/ci.yml`: `smoke` + `playwright-smoke` jobs bind container port `80` to an ephemeral host port (`-p 0:80`) and read the assigned port via `docker port`. Container names include `${{ github.run_id }}-${{ github.run_attempt }}` so concurrent CI runs (PR + main push, reruns) can coexist on the same self-hosted host.
+- `playwright-smoke` job derives `BASE_URL` from the dynamic boot URL instead of `http://localhost:18125`.
+- `Caddyfile` + `Caddyfile.smoke`: `/version` literal bumped to `0.10.5` (version-consistency gate).
+
+### Why
+SRcore #775 (sibling of coin #757 and aventera #774). Per-repo unique ports from SRcore #732 isolate between projects, not between concurrent runs of the same project. Without this, parallel CI on the shared self-hosted host raced on port 18125.
+
 ## [0.10.4] - 2026-05-15 — `refactor(srcore#760)` — Drop version literal from /health
 
 ### Changed
