@@ -58,16 +58,23 @@ jobs:
           push: false
           load: true
           tags: presentation:smoke-${{ github.sha }}
+      # SRcore #775 — ephemeral host port + unique container name so parallel
+      # CI runs (PR + main push, reruns) can coexist on the shared self-hosted
+      # host. Mirrors coin #757.
+      # v0.10.0 — production Caddyfile has forward_auth that would 302 every
+      # smoke request to login.sardonicrepulsion.com. Mount Caddyfile.smoke
+      # (no gate) for the smoke run so /healthz, /version, and / stay testable.
       - name: Run container
-        # v0.10.0 — production Caddyfile has forward_auth that would 302 every
-        # smoke request to login.sardonicrepulsion.com. Mount Caddyfile.smoke
-        # (no gate) for the smoke run so /healthz, /version, and / stay testable.
         run: |
-          docker run -d --name presentation-smoke -p 18125:80 \
+          NAME=presentation-smoke-${{ github.run_id }}-${{ github.run_attempt }}
+          docker run -d --name "$NAME" -p 0:80 \
             -v "$PWD/Caddyfile.smoke:/etc/caddy/Caddyfile:ro" \
             presentation:smoke-${{ github.sha }}
+          PORT=$(docker port "$NAME" 80/tcp | head -1 | sed -E 's/.*:([0-9]+)$/\1/')
+          echo "PRES_URL=http://127.0.0.1:$PORT" >> "$GITHUB_ENV"
+          echo "PRES_NAME=$NAME" >> "$GITHUB_ENV"
           for i in 1 2 3 4 5 6 7 8 9 10; do
-            if curl -fsS http://localhost:18125/healthz > /dev/null; then
+            if curl -fsS "http://127.0.0.1:$PORT/healthz" > /dev/null; then
               echo "ready"; break
             fi
             sleep 1
@@ -75,12 +82,12 @@ jobs:
       - name: Smoke /healthz + /version
         run: |
           set -e
-          curl -fsS http://localhost:18125/healthz | grep -q '"status":"ok"'
-          curl -fsS http://localhost:18125/version | grep -q '"app":"presentation"'
-          curl -fsSI http://localhost:18125/ | grep -i 'content-security-policy'
+          curl -fsS "$PRES_URL/healthz" | grep -q '"status":"ok"'
+          curl -fsS "$PRES_URL/version" | grep -q '"app":"presentation"'
+          curl -fsSI "$PRES_URL/" | grep -i 'content-security-policy'
       - name: Cleanup
         if: always()
-        run: docker rm -f presentation-smoke || true
+        run: docker rm -f "$PRES_NAME" || true
 
   playwright-smoke:
     needs: docker-build
@@ -96,14 +103,19 @@ jobs:
           push: false
           load: true
           tags: presentation:pw-${{ github.sha }}
+      # SRcore #775 — see smoke job above for rationale.
+      # v0.10.0 — same Caddyfile.smoke override as the smoke job (see comment above).
       - name: Run container
-        # v0.10.0 — same Caddyfile.smoke override as the smoke job (see comment above).
         run: |
-          docker run -d --name presentation-pw -p 18125:80 \
+          NAME=presentation-pw-${{ github.run_id }}-${{ github.run_attempt }}
+          docker run -d --name "$NAME" -p 0:80 \
             -v "$PWD/Caddyfile.smoke:/etc/caddy/Caddyfile:ro" \
             presentation:pw-${{ github.sha }}
+          PORT=$(docker port "$NAME" 80/tcp | head -1 | sed -E 's/.*:([0-9]+)$/\1/')
+          echo "PRES_URL=http://127.0.0.1:$PORT" >> "$GITHUB_ENV"
+          echo "PRES_NAME=$NAME" >> "$GITHUB_ENV"
           for i in 1 2 3 4 5 6 7 8 9 10; do
-            if curl -fsS http://localhost:18125/healthz > /dev/null; then
+            if curl -fsS "http://127.0.0.1:$PORT/healthz" > /dev/null; then
               echo "ready"; break
             fi
             sleep 1
@@ -121,7 +133,7 @@ jobs:
       - name: Run Playwright tests
         env:
           PLAYWRIGHT_BROWSERS_PATH: /opt/playwright-browsers
-          BASE_URL: http://localhost:18125
+          BASE_URL: ${{ env.PRES_URL }}
         run: npx playwright test
       - name: Upload Playwright report
         if: failure()
@@ -131,4 +143,4 @@ jobs:
           path: playwright-report
       - name: Cleanup
         if: always()
-        run: docker rm -f presentation-pw || true
+        run: docker rm -f "$PRES_NAME" || true
