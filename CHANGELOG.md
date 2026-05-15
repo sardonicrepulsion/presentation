@@ -1,5 +1,10 @@
 # Changelog
 
+## [0.10.4] - 2026-05-15 — `refactor(srcore#760)` — Drop version literal from /health
+
+### Changed
+- `Caddyfile`: `/health` and `/healthz` respond bodies no longer carry a `version` field. Eliminates the Caddyfile-side source-of-truth that drifted in coin#22.
+
 All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
