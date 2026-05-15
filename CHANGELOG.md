@@ -1,5 +1,20 @@
 # Changelog
 
+## [0.10.6] - 2026-05-15 — `ci(srcore#777)` — Dependabot auto-merge for patch-version updates
+
+### Added
+- `.github/dependabot.yml` (npm weekly Mondays / github-actions monthly / docker monthly). Mirrors aventera's template.
+- `.github/workflows/dependabot-auto-merge.yml`: when `dependabot[bot]` opens a PR, uses `dependabot/fetch-metadata@v2` to classify; if `version-update:semver-patch`, approves + enables auto-merge (squash). Major/minor stays manual.
+
+### Changed
+- Repo setting `allow_auto_merge=true` (toggled via API; required for `gh pr merge --auto`).
+- `Caddyfile` + `Caddyfile.smoke` `/version` literal bumped to `0.10.6` (version-consistency gate).
+
+### Why
+SRcore #777 (child of #773). Reduces operational drag from patch-bump triage backlogs.
+
+Note: org is on GitHub free plan, where `allow_auto_merge` is only available on PUBLIC repos. Presentation is public, so the per-PR auto-merge queue mutation works. For private repos in the same org, this pattern silently degrades to immediate-merge-after-checks (acceptable for fast static CI).
+
 ## [0.10.5] - 2026-05-15 — `ci(srcore#775)` — Ephemeral host port + unique container names
 
 ### Changed
