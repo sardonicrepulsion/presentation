@@ -16,11 +16,11 @@
 
     handle /health {
         header Content-Type application/json
-        respond "{\"status\":\"ok\",\"version\":\"0.10.3\"}" 200
+        respond `{"status":"ok"}` 200
     }
     handle /healthz {
         header Content-Type application/json
-        respond "{\"status\":\"ok\",\"version\":\"0.10.3\"}" 200
+        respond `{"status":"ok"}` 200
     }
     handle /version {
         header Content-Type application/json
