@@ -1,0 +1,26 @@
+self-hosted-runner:
+  labels:
+    - org-pool
+    - aventera
+    - brew
+    - coin
+    - decoy
+    - dish
+    - drums
+    - education
+    - evolver
+    - fast
+    - flyer
+    - gear
+    - kairo
+    - lacarte
+    - pulsecraft
+    - presentation
+    - reprint
+    - studio
+    - synth
+    - tools
+    - waver
+    - youloop
+    - sardonic-arm64-oscilloscope
+    - sardonic-arm64-presentation
