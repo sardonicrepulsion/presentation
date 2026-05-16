@@ -19,7 +19,7 @@ permissions:
 jobs:
   actionlint:
     name: Lint GitHub Actions workflows
-    runs-on: [self-hosted, sardonic-arm64-presentation]
+    runs-on: [self-hosted, Linux, ARM64, org-pool]
     steps:
       - name: Checkout
         uses: actions/checkout@v4
