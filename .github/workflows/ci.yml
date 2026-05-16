@@ -11,14 +11,14 @@ concurrency:
 
 jobs:
   static-tests:
-    runs-on: [self-hosted, sardonic-arm64-presentation]
+    runs-on: [self-hosted, Linux, ARM64, org-pool]
     steps:
       - uses: actions/checkout@v4
       - name: Run static tests
         run: node --test tests/*.test.mjs
 
   version-consistency:
-    runs-on: [self-hosted, sardonic-arm64-presentation]
+    runs-on: [self-hosted, Linux, ARM64, org-pool]
     steps:
       - uses: actions/checkout@v4
       - name: Check VERSION matches version.json + Caddyfile
@@ -31,7 +31,7 @@ jobs:
           echo "version-consistency OK: $v"
 
   docker-build:
-    runs-on: [self-hosted, sardonic-arm64-presentation]
+    runs-on: [self-hosted, Linux, ARM64, org-pool]
     steps:
       - uses: actions/checkout@v4
       - name: Set up Docker Buildx
@@ -46,7 +46,7 @@ jobs:
 
   smoke:
     needs: docker-build
-    runs-on: [self-hosted, sardonic-arm64-presentation]
+    runs-on: [self-hosted, Linux, ARM64, org-pool]
     steps:
       - uses: actions/checkout@v4
       - name: Set up Docker Buildx
@@ -91,7 +91,7 @@ jobs:
 
   playwright-smoke:
     needs: docker-build
-    runs-on: [self-hosted, sardonic-arm64-presentation]
+    runs-on: [self-hosted, Linux, ARM64, org-pool]
     steps:
       - uses: actions/checkout@v4
       - name: Set up Docker Buildx
