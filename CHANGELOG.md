@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.10.12] - 2026-05-21 — `chore(srcore#872)` — Unblock LH workflow (inline Chromium resolve + hidden-file upload)
+
+### Fixed
+
+- `.github/workflows/lighthouse.yml`: replaced `uses: sardonicrepulsion/devops/.github/actions/resolve-playwright-chromium@main` (private cross-repo composite action ref — fails with "Unable to resolve action" at setup) with an inline `run:` step that resolves `/opt/playwright-browsers/chromium-*/chrome-linux/chrome` directly and exports `CHROME_PATH`.
+- `.github/workflows/lighthouse.yml`: `actions/upload-artifact@v7` step now sets `include-hidden-files: true`. Without it the action skipped `.lighthouseci/` because the directory name starts with `.` — Lighthouse reports were written but never uploaded, so the artifact was missing every run. Unblocks #870 calibration (need score data to set per-repo thresholds).
+
 ## [0.10.11] - 2026-05-21 — `chore(srcore#867)` — Add Lighthouse CI score gates
 
 ### Added

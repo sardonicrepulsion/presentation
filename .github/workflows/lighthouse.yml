@@ -40,7 +40,14 @@ jobs:
             sleep 2
           done
       - name: Resolve Chromium binary for Lighthouse
-        uses: sardonicrepulsion/devops/.github/actions/resolve-playwright-chromium@main
+        run: |
+          CHROME=$(ls -1d /opt/playwright-browsers/chromium-*/chrome-linux/chrome 2>/dev/null | sort -V | tail -1)
+          if [ -z "$CHROME" ] || [ ! -x "$CHROME" ]; then
+            echo "::error::No Playwright Chromium found under /opt/playwright-browsers/chromium-*/chrome-linux/chrome"
+            exit 1
+          fi
+          echo "CHROME_PATH=$CHROME" >> "$GITHUB_ENV"
+          "$CHROME" --version || true
       - name: Run Lighthouse CI
         run: npx --yes @lhci/cli@0.14.x autorun
       - name: Upload Lighthouse report
@@ -49,6 +56,7 @@ jobs:
         with:
           name: lighthouse-report
           path: .lighthouseci/
+          include-hidden-files: true
           retention-days: 7
       - name: Tear down
         if: always()
