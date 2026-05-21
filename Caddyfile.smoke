@@ -27,11 +27,11 @@
     }
     handle /version {
         header Content-Type application/json
-        respond `{"app":"presentation","version":"0.10.10","classification":"tool/public/active"}` 200
+        respond `{"app":"presentation","version":"0.10.11","classification":"tool/public/active"}` 200
     }
     handle /version.json {
         header Content-Type application/json
-        respond `{"app":"presentation","version":"0.10.10","classification":"tool/public/active"}` 200
+        respond `{"app":"presentation","version":"0.10.11","classification":"tool/public/active"}` 200
     }
     handle /robots.txt {
         header Content-Type "text/plain; charset=utf-8"

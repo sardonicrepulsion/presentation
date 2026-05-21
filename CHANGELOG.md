@@ -1,5 +1,14 @@
 # Changelog
 
+## [0.10.11] - 2026-05-21 — `chore(srcore#867)` — Add Lighthouse CI score gates
+
+### Added
+
+- `.github/workflows/lighthouse.yml` — standalone LHCI workflow. Self-hosted ARM64. Builds image, boots on port 19240, runs `@lhci/cli@0.14.x autorun`, uploads report artifact. `continue-on-error: true` initially — thresholds will be calibrated from first run.
+- `lighthouserc.json` — desktop preset, 2 runs, baseline thresholds (perf 0.80, a11y 0.93, best-practices 0.95, seo 0.95). PWA + crawlable + preconnect audits off.
+
+Part of fleet-wide #867 LHCI rollout (17 V2 repos). Pattern from synth pilot (#854).
+
 ## [0.10.10] - 2026-05-21 — `chore(srcore#866)` — Canonicalise Caddyfile indent (tabs per `caddy fmt`)
 
 ### Changed
