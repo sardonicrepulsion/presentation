@@ -1,18 +1,26 @@
 # Changelog
 
+## [0.10.9] - 2026-05-21 — `chore(srcore#853)` — Long-cache static assets (Cache-Control max-age=30d)
+
+### Added
+
+- Caddyfile `@longcache` matcher applies `Cache-Control: public, max-age=2592000, must-revalidate` to `/js/*.js`, `/styles.css`, `/favicon.svg`, `/og-cover.svg`, `/icon-*.png`, `/manifest.webmanifest`. Closes Lighthouse `uses-long-cache-ttl` gap that fast 2.4.0 already had.
+
 ## [0.10.8] - 2026-05-21 — `fix(srcore#835)` — Allow `/version.json` through SSO gate (no auth required)
 
 ### Fixed
+
 - `Caddyfile` + `Caddyfile.smoke`: new `handle /version.json` block that returns the same JSON as `/version`, placed BEFORE the catch-all `handle { … forward_auth … }` so the version-drift-probe gets 200, not 302.
 - Bumped `/version` literal `0.10.7 → 0.10.8` in both Caddyfiles (version-consistency gate).
 
 ### Why
-SRcore #835. `/root/scripts/audit/version-drift-probe.sh` (per `[[srcore_760_health_version_drop_2026-05-15]]`) hits `/version.json` as the canonical version source and was flagging presentation red because the SSO `forward_auth` gate intercepted the request → 302 to login. The fix mirrors the existing pre-gate handlers (`/health`, `/healthz`, `/version`).
 
+SRcore #835. `/root/scripts/audit/version-drift-probe.sh` (per `[[srcore_760_health_version_drop_2026-05-15]]`) hits `/version.json` as the canonical version source and was flagging presentation red because the SSO `forward_auth` gate intercepted the request → 302 to login. The fix mirrors the existing pre-gate handlers (`/health`, `/healthz`, `/version`).
 
 ## [0.10.7] - 2026-05-21 — `chore(srcore#823)` — Bump GHA actions to Node 24-compatible versions
 
 ### Changed
+
 - `actions/checkout@v4` → `@v6` (where present).
 - `actions/setup-node@v4` → `@v6` (where present).
 - `actions/upload-artifact@v4` → `@v7` (where present).
@@ -22,18 +30,20 @@ SRcore #835. `/root/scripts/audit/version-drift-probe.sh` (per `[[srcore_760_hea
 
 GitHub forces Node 24 default on **2026-06-16**; Node 20 fully removed **2026-09-16**. Pattern validated on `brew` (canary).
 
-
 ## [0.10.6] - 2026-05-15 — `ci(srcore#777)` — Dependabot auto-merge for patch-version updates
 
 ### Added
+
 - `.github/dependabot.yml` (npm weekly Mondays / github-actions monthly / docker monthly). Mirrors aventera's template.
 - `.github/workflows/dependabot-auto-merge.yml`: when `dependabot[bot]` opens a PR, uses `dependabot/fetch-metadata@v2` to classify; if `version-update:semver-patch`, approves + enables auto-merge (squash). Major/minor stays manual.
 
 ### Changed
+
 - Repo setting `allow_auto_merge=true` (toggled via API; required for `gh pr merge --auto`).
 - `Caddyfile` + `Caddyfile.smoke` `/version` literal bumped to `0.10.6` (version-consistency gate).
 
 ### Why
+
 SRcore #777 (child of #773). Reduces operational drag from patch-bump triage backlogs.
 
 Note: org is on GitHub free plan, where `allow_auto_merge` is only available on PUBLIC repos. Presentation is public, so the per-PR auto-merge queue mutation works. For private repos in the same org, this pattern silently degrades to immediate-merge-after-checks (acceptable for fast static CI).
@@ -41,16 +51,19 @@ Note: org is on GitHub free plan, where `allow_auto_merge` is only available on 
 ## [0.10.5] - 2026-05-15 — `ci(srcore#775)` — Ephemeral host port + unique container names
 
 ### Changed
+
 - `.github/workflows/ci.yml`: `smoke` + `playwright-smoke` jobs bind container port `80` to an ephemeral host port (`-p 0:80`) and read the assigned port via `docker port`. Container names include `${{ github.run_id }}-${{ github.run_attempt }}` so concurrent CI runs (PR + main push, reruns) can coexist on the same self-hosted host.
 - `playwright-smoke` job derives `BASE_URL` from the dynamic boot URL instead of `http://localhost:18125`.
 - `Caddyfile` + `Caddyfile.smoke`: `/version` literal bumped to `0.10.5` (version-consistency gate).
 
 ### Why
+
 SRcore #775 (sibling of coin #757 and aventera #774). Per-repo unique ports from SRcore #732 isolate between projects, not between concurrent runs of the same project. Without this, parallel CI on the shared self-hosted host raced on port 18125.
 
 ## [0.10.4] - 2026-05-15 — `refactor(srcore#760)` — Drop version literal from /health
 
 ### Changed
+
 - `Caddyfile`: `/health` and `/healthz` respond bodies no longer carry a `version` field. Eliminates the Caddyfile-side source-of-truth that drifted in coin#22.
 
 All notable changes to this project will be documented in this file.
@@ -63,6 +76,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [0.10.3] - 2026-05-13
 
 ### Fixed
+
 - **forward_auth redirect loop — final fix (#721).** v0.10.2 sent the
   original host as query-string args to login `/verify`, but Caddy's
   `forward_auth` does **not** expand placeholders inside the `uri`
@@ -82,8 +96,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [0.10.2] - 2026-05-13
 
 ### Fixed
+
 - **forward_auth redirect-loop final fix (#721).** v0.10.1 added `header_up
-  X-Forwarded-Host {http.request.host}` etc., but host-side Caddy strips
+X-Forwarded-Host {http.request.host}` etc., but host-side Caddy strips
   client-set `X-Forwarded-*` because the in-container proxy isn't on its
   `trusted_proxies` list, so the override was silently overwritten before
   reaching the login service. v0.10.2 sends the original host + URI + scheme
@@ -95,6 +110,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [0.10.1] - 2026-05-13
 
 ### Fixed
+
 - **forward_auth redirect loop (#721 follow-up).** Live deploy of 0.10.0
   redirected anonymous visitors to
   `https://login.sardonicrepulsion.com/login?redirect=https://login.sardonicrepulsion.com:443/`,
@@ -110,6 +126,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [0.10.0] - 2026-05-13
 
 ### Added
+
 - **SSO gate for access=internal (SRcore #721).** Presentation is
   classified `access=internal` in `core_projects` (the SRcore source of
   truth) but its host has been returning `200 OK` to anonymous visitors
@@ -123,6 +140,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [0.9.1] - 2026-05-11
 
 ### Changed
+
 - **Slide content fixes from audit (#645).** Three factual inaccuracies
   flagged during the post-deploy audit, fixed per content owner's
   direction (Telegram, 2026-05-11):
@@ -142,6 +160,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [0.9.0] - 2026-05-11
 
 ### Changed
+
 - **CSP hardening — inline JS+CSS extracted (task #644).** The v2 deck inline
   `<style>` (545 lines) and inline `<script>` (442 lines) are extracted to
   `/v2/styles.css` and `/v2/deck.js` respectively. `index.v2.html` now links
@@ -155,12 +174,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Dockerfile copies `v2/` into `/srv/v2/`.
 
 ### Added
+
 - `v2/styles.css` — v2 deck stylesheet (extracted).
 - `v2/deck.js` — v2 deck logic (extracted, `defer`-loaded).
 
 ## [0.8.0] - 2026-05-11
 
 ### Changed
+
 - **Root deck replaced with v2 single-file SRcore presentation.** New deck
   delivered as a final HTML+CSS+JS bundle by the content owner (10 screen
   captures + dedicated content slides). Old deck (0.7.x) remains served under
@@ -173,6 +194,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   #644 extracts inline assets and restores strict CSP + Trusted Types.
 
 ### Added
+
 - `index.v2.html` — single-file v2 deck (39KB, inline CSS + inline JS, deck
   navigation, dots, fullscreen, touch swipe).
 - `screens/` — 10 PNG screen captures referenced by v2 deck slides
@@ -180,6 +202,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   categories, models, settings, more).
 
 ### SRcore tasks
+
 - #640 nasadiť v2 deck (this PR)
 - #641 Caddyfile inline allowance (this PR)
 - #642 version bump 0.7.1 → 0.8.0 (this PR)
@@ -190,16 +213,19 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [0.7.1] - 2026-05-11
 
 ### Added
+
 - **`/old/` SEO hygiene.** `robots.txt` now `Disallow: /old/` so the snapshot is not indexed. Dockerfile snapshot step also injects `<meta name="robots" content="noindex,nofollow">` into `/srv/old/index.html` for crawlers that ignore robots.txt. Static test asserts both pieces of the Dockerfile pipeline.
 
 ## [0.7.0] - 2026-05-11
 
 ### Added
+
 - **`/old/` snapshot route.** Dockerfile build now duplicates the current deck (index.html + css + js + data + assets + manifest) under `/srv/old/` and rewrites the absolute asset paths to `/old/...`. The next presentation can replace the root slot without breaking the historical copy. Static test guards the Dockerfile snapshot step.
 
 ## [0.6.1] - 2026-05-10
 
 ### Fixed
+
 - `Dockerfile` `COPY` line missed `robots.txt` and `sitemap.xml`, so the v0.6.0 deploy returned 404 for both files even though the Caddyfile handlers were in place. Added both to the static-asset copy line.
 
 ## [0.6.0] - 2026-05-10
@@ -207,6 +233,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 Single batch PR for six presentation polish/feature tasks (#00454 / #00455 / #00456 / #00457 / #00458 / #00459). #00460 (HSTS preload + COOP/CORP via dokku caddy:labels:add) lands as a separate runtime config + docs commit since it does not require a code change to the app — labels are applied on the host. Bundled per the new "no parallel PRs on the same project" + "crisis batch mode" rules.
 
 ### Added
+
 - **#00454 — Slide transitions.** `js/app.js` `render()` now toggles a one-frame `is-fading` class on the active slide so it briefly fades + nudges 6px on slide change. CSS adds `transition: opacity 220ms, transform 220ms` on `.slide` + a reduce-motion override that disables both. `paintSlide()` is exposed as a fast path used by reduce-motion + by Playwright assertions that don't want to wait on the animation.
 - **#00455 — Keyboard help overlay.** `<dialog id="help">` markup with the full shortcut list. `?` toggles, `Esc` closes (native `<dialog>` behaviour). Header `?` button mirrors the keyboard shortcut for mouse users. CSS styles the dialog + backdrop.
 - **#00456 — Speaker notes mode.** `slides[i].notes` (string) is rendered into a bottom panel toggled by `S`. State persists in `localStorage[presentation.notesOpen]` so mode survives reload. Empty notes show a grey "No notes for this slide." placeholder. Panel re-paints on every slide change.
@@ -217,10 +244,12 @@ Single batch PR for six presentation polish/feature tasks (#00454 / #00455 / #00
 - Help (`?`) button mounted in the bottom controls bar between `next` and `fullscreen`.
 
 ### Tests
+
 - `tests/e2e/smoke.spec.mjs` — existing slide / counter / Home-End / CSP assertions stay green. Reduce-motion path for #00454 is covered indirectly by the existing `arrow keys + nav buttons advance counter` test (the test uses `toHaveText` which retries past the fade frame, but the JS exposes `paintSlide()` as a synchronous path).
 - `tests/presentation-static.test.mjs` — sweep stays green; new HTML / JS markers asserted by the existing template-shape checks remain valid (no removed selectors).
 
 ### Notes
+
 - CSP unchanged — new code keeps the existing `textContent` + `replaceChildren` discipline so `require-trusted-types-for 'script'` remains compatible. `<dialog>` + `setAttribute` paths do not require a Trusted Types policy.
 - Caddy gains explicit `/robots.txt` + `/sitemap.xml` handlers so the static fallback returns the right `Content-Type` (default `file_server` works but the explicit handlers also pin a 1h cache and are easier to grep for).
 - #00460 (HSTS preload + COOP/CORP) is delivered via `docs/HEADERS.md` + `dokku caddy:labels:add` runtime config, which do not require an app rebuild.
@@ -228,35 +257,42 @@ Single batch PR for six presentation polish/feature tasks (#00454 / #00455 / #00
 ## [0.5.0] - 2026-05-09
 
 ### Added
+
 - 5 more custom SVG diagrams (every non-screenshot slide now has its own diagram instead of a placeholder): `slide-problem.svg` (3 broken systems triptych), `slide-vision.svg` (funnel: many inputs → SRcore → outputs), `slide-doneguard.svg` (SQL block + BLOCKED stamp + error code), `slide-models.svg` (real-data bar chart 326/268/201/47), `slide-orchestrator.svg` (manager → 3 subagents → 3 reviewers/testers org chart), `slide-v2sweep.svg` (8-project before/after ratings), `slide-roadmap.svg` (Q3 / Q4 / Q1'27 timeline + Otázky)
 
 ### Changed
+
 - Re-captured 4 SRcore screenshots at 1920×1200 with `deviceScaleFactor: 1.5` so dashboard hero shows time-tracking + per-project breakdown rows (not just totals)
 - Every slide now has a unique image (no more 3-SVG cycle)
 
 ## [0.4.0] - 2026-05-09
 
 ### Added
+
 - Real SRcore screenshots for demo slides: `srcore-dashboard.png`, `srcore-tasks.png`, `srcore-task-detail.png`, `srcore-audit.png` (1440×900, captured against live `srcore.sardonicrepulsion.com`)
 - Custom SVG diagrams: `slide-title.svg` (SRcore branding + key numbers), `slide-architecture.svg` (Caddy → PHP → MySQL + side channels), `slide-lifecycle.svg` (8-state machine with stale-watcher branches)
 - Deck content expanded from 12 → 14 slides: demo split into 3 dedicated slides (tasks list / task detail / audit log) with screenshots; live numbers slide now uses the real dashboard hero
 
 ### Changed
+
 - Slide bullets sharpened across the deck: title slide leads with throughput numbers; done-guard slide adds the DB-level error code; demo slides describe what the screenshot shows rather than abstract features
 
 ## [0.3.1] - 2026-05-09
 
 ### Fixed
+
 - `package.json` version bump (was stuck at 0.2.0 while other markers were 0.3.0); deployer precheck blocked merge of v0.3.0 — this hotfix syncs all version markers and unblocks live deploy
 
 ## [0.3.0] - 2026-05-09
 
 ### Added
+
 - First real SRcore deck content (12 slides, SK)
 
 ## [0.2.0] - 2026-05-09
 
 ### Added
+
 - Playwright smoke E2E (`tests/e2e/smoke.spec.mjs`): initial render + counter `1/N`, ArrowRight/Prev/Next nav, Home/End jumps, strict CSP header assertions + `/healthz` + `/version` JSON shape
 - `playwright.config.mjs` (chromium project, baseURL `http://localhost:18080`)
 - `playwright-smoke` GitHub Actions job on dedicated `sardonic-arm64-presentation` runner (Playwright pre-installed at `/opt/playwright-browsers`); uploads `playwright-report` artifact on failure
@@ -266,6 +302,7 @@ Single batch PR for six presentation polish/feature tasks (#00454 / #00455 / #00
 ## [0.1.0] - 2026-05-09
 
 ### Added
+
 - Initial V2 baseline: slide deck viewer (image-left, bullets-right)
 - Keyboard navigation: ←/→/Home/End/F/Esc + touch swipe
 - Progress bar + slide counter (`n / N`)
