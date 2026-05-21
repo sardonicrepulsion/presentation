@@ -22,7 +22,7 @@ jobs:
     runs-on: [self-hosted, Linux, ARM64, org-pool]
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
 
       - name: Run actionlint (rhysd/actionlint docker, pinned by digest)
         run: |

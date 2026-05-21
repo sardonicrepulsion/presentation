@@ -1,5 +1,18 @@
 # Changelog
 
+## [0.10.7] - 2026-05-21 — `chore(srcore#823)` — Bump GHA actions to Node 24-compatible versions
+
+### Changed
+- `actions/checkout@v4` → `@v6` (where present).
+- `actions/setup-node@v4` → `@v6` (where present).
+- `actions/upload-artifact@v4` → `@v7` (where present).
+- `docker/build-push-action@v6` → `@v7` (where present).
+- `docker/setup-buildx-action@v3` → `@v4` (where present).
+- `dependabot/fetch-metadata@v2` → `@v3` (where present).
+
+GitHub forces Node 24 default on **2026-06-16**; Node 20 fully removed **2026-09-16**. Pattern validated on `brew` (canary).
+
+
 ## [0.10.6] - 2026-05-15 — `ci(srcore#777)` — Dependabot auto-merge for patch-version updates
 
 ### Added
