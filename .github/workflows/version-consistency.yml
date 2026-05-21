@@ -49,7 +49,12 @@ jobs:
             add "VERSION" "$(tr -d ' \n' < VERSION)"
           fi
           if [ -f Caddyfile ]; then
+            # Match both plain `"version":"X"` and escape-quoted `\"version\":\"X\"`
+            # (Caddyfile labels in dokku containers double-escape JSON) (SRcore #843).
             v=$(grep -oE '"version":"[^"]+"' Caddyfile 2>/dev/null | head -1 | cut -d'"' -f4 || true)
+            if [ -z "$v" ]; then
+              v=$(grep -oE '\\"version\\":\\"[^\\]+\\"' Caddyfile 2>/dev/null | head -1 | sed -E 's/.*\\"version\\":\\"([^\\]+)\\".*/\1/' || true)
+            fi
             add "Caddyfile" "$v"
           fi
 
