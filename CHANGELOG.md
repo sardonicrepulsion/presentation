@@ -1,5 +1,15 @@
 # Changelog
 
+## [0.10.8] - 2026-05-21 — `fix(srcore#835)` — Allow `/version.json` through SSO gate (no auth required)
+
+### Fixed
+- `Caddyfile` + `Caddyfile.smoke`: new `handle /version.json` block that returns the same JSON as `/version`, placed BEFORE the catch-all `handle { … forward_auth … }` so the version-drift-probe gets 200, not 302.
+- Bumped `/version` literal `0.10.7 → 0.10.8` in both Caddyfiles (version-consistency gate).
+
+### Why
+SRcore #835. `/root/scripts/audit/version-drift-probe.sh` (per `[[srcore_760_health_version_drop_2026-05-15]]`) hits `/version.json` as the canonical version source and was flagging presentation red because the SSO `forward_auth` gate intercepted the request → 302 to login. The fix mirrors the existing pre-gate handlers (`/health`, `/healthz`, `/version`).
+
+
 ## [0.10.7] - 2026-05-21 — `chore(srcore#823)` — Bump GHA actions to Node 24-compatible versions
 
 ### Changed
