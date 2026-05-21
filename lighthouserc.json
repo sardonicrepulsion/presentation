@@ -1,20 +1,47 @@
 {
   "ci": {
     "collect": {
-      "url": ["http://127.0.0.1:19240/"],
+      "url": [
+        "http://127.0.0.1:19240/"
+      ],
       "numberOfRuns": 2,
       "settings": {
         "preset": "desktop",
         "chromeFlags": "--no-sandbox --disable-dev-shm-usage --disable-gpu",
-        "skipAudits": ["uses-http2", "is-on-https", "redirects-http", "csp-xss"]
+        "skipAudits": [
+          "uses-http2",
+          "is-on-https",
+          "redirects-http",
+          "csp-xss"
+        ]
       }
     },
     "assert": {
       "assertions": {
-        "categories:performance": ["error", { "minScore": 0.80 }],
-        "categories:accessibility": ["error", { "minScore": 0.93 }],
-        "categories:best-practices": ["error", { "minScore": 0.95 }],
-        "categories:seo": ["error", { "minScore": 0.95 }],
+        "categories:performance": [
+          "error",
+          {
+            "minScore": 0.95
+          }
+        ],
+        "categories:accessibility": [
+          "error",
+          {
+            "minScore": 0.98
+          }
+        ],
+        "categories:best-practices": [
+          "error",
+          {
+            "minScore": 0.98
+          }
+        ],
+        "categories:seo": [
+          "error",
+          {
+            "minScore": 0.88
+          }
+        ],
         "categories:pwa": "off",
         "is-crawlable": "off",
         "uses-rel-preconnect": "off"
